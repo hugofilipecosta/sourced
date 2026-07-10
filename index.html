@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sourced — Visual inspiration & mood boards for designers</title>
+<meta name="description" content="Sourced is a curation engine for designers and AI-curation professionals. Discover design and art inspiration from open collections, build mood boards, and turn them into ready-to-use image-generation prompts. Where taste gets credit." />
+<meta name="keywords" content="design inspiration, mood board, visual discovery, curation, art reference, graphic design, typography, brutalist, risograph, AI prompt generator, image generation prompt, color search, designers, creative reference" />
+<meta property="og:title" content="Sourced — Where taste gets credit" />
+<meta property="og:description" content="Discover design & art inspiration, build mood boards, and generate image prompts. A curation engine for designers and AI-curation professionals." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap" rel="stylesheet" /><style>
+:root{--paper:#FAFAF8;--raised:#fff;--ink:#15140F;--soft:#5B584F;--amber:#00DB04;--accentText:#0A7A0C;--ambersoft:#D7F8D8;--line:rgba(21,20,15,.10);--lineS:rgba(21,20,15,.18)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Lexend Deca',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none;cursor:pointer}
+.wm{font-family:'Lexend Deca',system-ui,sans-serif;font-style:normal;font-weight:800;letter-spacing:-0.01em}
+.logo{font-family:'BBH Bartle','Lexend Deca',sans-serif;font-weight:400;letter-spacing:0}
+.shell{max-width:1180px;margin:0 auto;padding-left:24px;padding-right:24px}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--line);background:rgba(250,250,248,.85);backdrop-filter:blur(8px)}
+nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
+.chip-live{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft)}
+.dot{width:6px;height:6px;border-radius:999px;background:var(--amber)}
+.btn-dark{color:var(--paper);background:var(--ink);padding:6px 14px;border-radius:999px;font-weight:500;font-size:13.5px;border:none;cursor:pointer;font-family:inherit}
+.hero{text-align:center;padding:52px 24px 24px}
+.hero h1{font-family:'Lexend Deca',sans-serif;font-weight:600;font-size:36px;letter-spacing:-.01em;margin:0 0 10px}
+.hero p{font-size:13px;color:var(--soft);margin:0 0 22px}
+.search{max-width:480px;margin:0 auto;display:flex;align-items:center;gap:10px;border:1px solid var(--lineS);border-radius:999px;padding:11px 18px;background:var(--raised)}
+.search input{flex:1;border:none;background:transparent;font:inherit;font-size:14px;color:var(--ink);outline:none}
+.colorrow{max-width:480px;margin:12px auto 0;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.swatch{width:32px;height:32px;border-radius:8px;border:1px solid var(--lineS);padding:0;cursor:pointer;background:none}
+.hexin{border:1px solid var(--lineS);border-radius:999px;padding:8px 12px;font:inherit;font-size:12.5px;font-family:'IBM Plex Mono',monospace;width:150px;outline:none}
+.colorgo{border:none;background:var(--ink);color:var(--paper);border-radius:999px;padding:8px 12px;font:inherit;font-size:12px;cursor:pointer}
+.colorclear{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);cursor:pointer}
+.advtoggle{margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);cursor:pointer}
+.advtoggle:hover{color:var(--ink)}
+.adv{max-width:620px;margin:14px auto 0;border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;text-align:left}
+.adv-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.adv-lab{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);width:50px;flex-shrink:0}
+.adv-row .opt{border:1px solid var(--line);background:transparent;color:var(--soft);font:inherit;font-size:11.5px;padding:5px 11px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.adv-row .opt.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.quotebar{max-width:720px;margin:56px auto 0;padding:0 24px;text-align:center}
+.quotebar .q{font-size:18px;line-height:1.5;color:var(--ink)}
+.quotebar .a{display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.04em}
+.pills{max-width:960px;margin:24px auto 0;display:flex;flex-wrap:nowrap;justify-content:center;gap:8px;overflow-x:auto}
+.pill{white-space:nowrap}
+.tunebtn{display:grid;place-items:center;width:32px;height:32px;border-radius:999px;border:1px solid var(--line);background:transparent;cursor:pointer;flex-shrink:0;color:var(--ink)}
+.tunebtn:hover{border-color:var(--lineS)}
+.tunebtn .material-symbols-outlined{font-size:20px}
+.pill{border:1px solid var(--line);background:transparent;color:var(--soft);font:inherit;font-size:12.5px;padding:7px 14px;border-radius:999px;cursor:pointer}
+.pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.label{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 14px}
+.label .l{font-size:13.5px;font-weight:600}
+.label .r{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft)}
+.feed{width:100%;padding:0 28px 56px}
+@media(max-width:520px){.feed{padding:0 14px 40px}}
+.grid{column-count:4;column-gap:18px;padding-bottom:56px}
+@media(max-width:1000px){.grid{column-count:3}}
+@media(max-width:720px){.grid{column-count:2}}
+.card{break-inside:avoid;margin-bottom:18px;cursor:pointer}
+.cover{position:relative;border-radius:0;overflow:hidden;box-shadow:0 1px 2px rgba(21,20,15,.04);transition:transform .28s cubic-bezier(.16,1,.3,1),box-shadow .28s cubic-bezier(.16,1,.3,1);background:var(--ambersoft)}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.card:hover .cover{transform:translateY(-3px);box-shadow:0 22px 44px -18px rgba(21,20,15,.28)}
+.strip{position:absolute;left:10px;right:10px;bottom:10px;display:flex;justify-content:space-between;gap:8px;opacity:0;transform:translateY(6px);transition:opacity .22s,transform .22s}
+.card:hover .strip{opacity:1;transform:translateY(0)}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#fff;background:rgba(21,20,15,.55);backdrop-filter:blur(6px);padding:4px 9px;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62%}
+.meta{margin-top:9px}
+.title{font-size:13.5px;font-weight:500}
+.title:hover{color:var(--accentText)}
+.sub{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--soft);margin-top:3px}
+.sub a:hover{color:var(--ink)}
+.back{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);display:inline-block;padding-top:24px}
+.back:hover{color:var(--ink)}
+.backbtn{display:inline-flex;align-items:center;gap:5px;margin-top:24px;border:1px solid var(--lineS);background:var(--raised);color:var(--ink);font:inherit;font-size:13px;font-weight:500;padding:8px 15px;border-radius:999px;cursor:pointer;transition:border-color .15s,background .15s}
+.backbtn:hover{border-color:var(--ink);background:var(--paper)}
+.dtitle{font-family:'Lexend Deca',sans-serif;font-weight:600;font-size:34px;letter-spacing:-.01em;margin:14px 0 6px}
+.dsub{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--soft)}
+.dsub a{color:var(--ink)}.dsub a:hover{color:var(--accentText)}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn{border-radius:999px;padding:8px 16px;font:inherit;font-size:13px;font-weight:500;cursor:pointer}
+.btn-primary{background:var(--ink);color:var(--paper);border:none}
+.btn-primary.on{background:var(--amber);color:var(--ink)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--lineS)}
+.btn-ghost.on{border-color:var(--ink)}
+.note{margin:24px 0 8px;max-width:720px}
+.note .lead{display:block;font-family:'Lexend Deca',sans-serif;font-weight:700;font-size:18px;color:var(--ink);letter-spacing:-.015em;margin-bottom:5px}
+.note .body{font-size:13.5px;line-height:1.65;color:var(--soft)}
+.note b{color:var(--ink);font-weight:700}
+.note a{color:var(--accentText);font-weight:600}
+.dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:24px}
+@media(max-width:900px){.dgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.dgrid{grid-template-columns:repeat(2,1fr)}}
+.tile{position:relative;border-radius:0;overflow:hidden;background:var(--ambersoft);box-shadow:0 1px 2px rgba(21,20,15,.04)}
+.tile img{width:100%;height:208px;object-fit:cover;display:block;transition:transform .3s}
+.tile:hover img{transform:scale(1.03)}
+.sel{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:999px;border:none;background:rgba(255,255,255,.9);color:var(--ink);display:grid;place-items:center;cursor:pointer;z-index:2;box-shadow:0 1px 5px rgba(21,20,15,.28);backdrop-filter:blur(2px);transition:background .15s}
+.sel:hover{background:#fff}
+.sel.on{color:var(--amber)}
+.sel .material-symbols-outlined{font-size:22px;line-height:1}
+.tile.picked{outline:3px solid var(--amber);outline-offset:-3px}
+.cover.picked{outline:3px solid var(--amber);outline-offset:-3px}
+.sec{font-size:15px;font-weight:600;margin-top:48px}
+.skel{border-radius:8px;background:var(--line);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.rotw{color:var(--accentText);display:inline-block;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.empty{text-align:center;padding:64px 0;font-family:'Lexend Deca',sans-serif;font-weight:600;font-size:18px;color:var(--soft)}
+.loader{display:flex;justify-content:center;padding:34px 0}
+.loader .star{font-size:28px;color:var(--amber);animation:loaderspin 1.1s cubic-bezier(.5,0,.5,1) infinite;display:inline-block}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.loader .loadericon{font-size:34px;color:var(--ink);animation:loaderspin 1.1s cubic-bezier(.5,0,.5,1) infinite;display:inline-block}
+@keyframes loaderspin{0%{transform:rotate(0) scale(.78);opacity:.45}50%{transform:rotate(180deg) scale(1.18);opacity:1}100%{transform:rotate(360deg) scale(.78);opacity:.45}}
+.era{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;flex-wrap:wrap}
+.era .lab{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;margin-right:2px}
+.era button{border:1px solid var(--line);background:transparent;color:var(--soft);font:inherit;font-size:11.5px;padding:5px 11px;border-radius:999px;cursor:pointer}
+.era button.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.standing{border:1px solid var(--line);background:var(--raised);border-radius:12px;padding:20px;margin-top:28px}
+.standing .row{display:flex;justify-content:space-between;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:16px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat .v{font-family:'IBM Plex Mono',monospace;font-size:18px}
+.stat .k{font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--soft);margin-top:2px}
+.avatar{height:56px;width:56px;border-radius:999px;object-fit:cover;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-family:'Lexend Deca',sans-serif;font-weight:700;font-size:22px}
+.footer{border-top:1px solid var(--line);margin-top:32px;padding:36px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.footer .r{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft)}
+.retry{margin-top:14px;border:1px solid var(--lineS);background:transparent;border-radius:999px;padding:7px 16px;font:inherit;font-size:12.5px;cursor:pointer}
+/* selection bar + modal */
+.selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:30;display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--paper);border-radius:999px;padding:10px 12px 10px 18px;box-shadow:0 18px 40px -16px rgba(21,20,15,.5)}
+.selbar .c{font-size:13px}
+.selbar .x{color:rgba(255,255,255,.6);font-size:12px;cursor:pointer}
+.selbar .go{background:var(--amber);color:var(--ink);border:none;border-radius:999px;padding:7px 14px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.overlay{position:fixed;inset:0;background:rgba(21,20,15,.45);z-index:40;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--paper);border-radius:14px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:22px}
+.modal h3{font-family:'Lexend Deca',sans-serif;font-weight:700;font-size:22px;margin:0 0 4px}
+.modal .msub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);margin-bottom:14px}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.thumbs img{width:54px;height:54px;object-fit:cover;border-radius:6px;background:var(--ambersoft)}
+.result{width:100%;min-height:120px;border:1px solid var(--lineS);border-radius:10px;padding:12px;font:inherit;font-size:13.5px;line-height:1.55;color:var(--ink);background:var(--raised);resize:vertical}
+.keyrow{display:flex;gap:8px;margin-top:12px}
+.keyrow input{flex:1;border:1px solid var(--lineS);border-radius:8px;padding:8px 12px;font:inherit;font-size:12.5px;font-family:'IBM Plex Mono',monospace}
+.mfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.tiny{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft)}
+.link{color:var(--accentText);cursor:pointer}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin></script>
+<script type="text/babel">
+const {useState,useEffect,useMemo,useCallback,useContext,createContext,useRef} = React;
+
+/* ============================================================================
+   SOURCE LAYER — the only code that knows where bytes come from. Every provider
+   is normalized into Sourced's own domain terms (Collection / Item / Creator).
+   Provider identity is kept internal (for fetch + outbound links) and is NEVER
+   shown in the UI. Add a provider by writing one more object in PROVIDERS.
+   All three sources below are keyless and send permissive CORS on reads.
+============================================================================ */
+const slug = s => (s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"").slice(0,60)||"x";
+const stripHtml = s => s? String(s).replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim() : "";
+// hex -> nearest named colour, so a colour pick becomes a real text search
+const NAMED_COLORS=[["red","#e02b2b"],["crimson","#a01b2d"],["orange","#e8731f"],["amber","#b5742a"],
+ ["terracotta","#c1582f"],["mustard","#caa12f"],["cream","#efe6d4"],["sage","#9fb39a"],["green","#3f7d4f"],
+ ["teal","#2f8f86"],["blue","#2f5fb5"],["navy","#1f2d52"],["sky","#8fb3d9"],["purple","#6b3fa0"],
+ ["lavender","#b9a7d8"],["pink","#e08bb0"],["magenta","#c0386f"],["brown","#6f4a2e"],["beige","#d8cfc0"],
+ ["charcoal","#2a2a2a"],["grey","#9a978f"],["white","#f4f2ec"]];
+function hexToRgb(h){h=(h||"").replace("#","");if(h.length===3)h=h.split("").map(c=>c+c).join("");const n=parseInt(h,16);return [n>>16&255,n>>8&255,n&255];}
+function nearestColorName(hex){const[r,g,b]=hexToRgb(hex);let best="",bd=1e9;for(const[n,h]of NAMED_COLORS){const[R,G,B]=hexToRgb(h);const d=(r-R)**2+(g-G)**2+(b-B)**2;if(d<bd){bd=d;best=n;}}return best;}
+const isHex = s => /^#?[0-9a-fA-F]{6}$/.test((s||"").trim());
+const normHex = s => { s=(s||"").trim(); return s.startsWith("#")?s:"#"+s; };
+
+// --- real pixel analysis: dominant colour + tone/hue histogram, in-browser ---
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);
+  let h=0,s=0,l=(mx+mn)/2;const d=mx-mn;
+  if(d){s=l>0.5?d/(2-mx-mn):d/(mx+mn);
+    if(mx===r)h=((g-b)/d+(g<b?6:0));else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;}
+  return[h,s,l];}
+function rgbToHex(r,g,b){return "#"+[r,g,b].map(x=>Math.max(0,Math.min(255,x)).toString(16).padStart(2,"0")).join("");}
+const colorDist2=(a,b)=>(a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2;
+function cosine(a,b){let d=0,na=0,nb=0;for(let i=0;i<a.length;i++){d+=a[i]*b[i];na+=a[i]*a[i];nb+=b[i]*b[i];}
+  return (na&&nb)?d/(Math.sqrt(na)*Math.sqrt(nb)):0;}
+const _analysis=new Map();
+function analyzeImage(url){
+  if(!url) return Promise.resolve(null);
+  if(_analysis.has(url)) return _analysis.get(url);
+  const p=new Promise(resolve=>{
+    const img=new Image(); img.crossOrigin="anonymous";
+    img.onload=()=>{ try{
+      const n=24,cv=document.createElement("canvas");cv.width=n;cv.height=n;
+      const ctx=cv.getContext("2d");ctx.drawImage(img,0,0,n,n);
+      const d=ctx.getImageData(0,0,n,n).data;
+      let r=0,g=0,b=0,cnt=0;const hist=new Array(12).fill(0);
+      for(let i=0;i<d.length;i+=4){const R=d[i],G=d[i+1],B=d[i+2];if(d[i+3]<128)continue;
+        r+=R;g+=G;b+=B;cnt++;const[h,s,l]=rgbToHsl(R,G,B);
+        let bin; if(s<0.18){bin=l<0.33?9:l<0.66?10:11;} else {bin=Math.min(8,Math.floor(h/40));}
+        hist[bin]++;}
+      if(!cnt){resolve(null);return;}
+      r=Math.round(r/cnt);g=Math.round(g/cnt);b=Math.round(b/cnt);
+      const sum=hist.reduce((a,x)=>a+x,0)||1;
+      resolve({rgb:[r,g,b],hex:rgbToHex(r,g,b),vec:hist.map(x=>x/sum)});
+    }catch(e){resolve(null);} };  // tainted canvas -> skip gracefully
+    img.onerror=()=>resolve(null);
+    img.src=url;
+  });
+  _analysis.set(url,p);return p;
+}
+const _cache = new Map();
+async function getJSON(url, headers){
+  const ck = url + (headers?JSON.stringify(headers):"");
+  if(_cache.has(ck)) return _cache.get(ck);
+  const r = await fetch(url,{headers:{Accept:"application/json",...(headers||{})}});
+  if(!r.ok) throw new Error(url+" "+r.status);
+  const d = await r.json(); _cache.set(ck,d); return d;
+}
+// Optional source keys (user-supplied, stored only in this browser).
+const keyGet = k => { try{return localStorage.getItem("sourced.key."+k)||"";}catch(e){return "";} };
+const keySet = (k,v) => { try{ v?localStorage.setItem("sourced.key."+k,v):localStorage.removeItem("sourced.key."+k); }catch(e){} };
+// Tumblr public read key (Consumer Key only — the Secret is never used client-side).
+// Fine for a prototype; move to a server env var before shipping a public repo.
+const TUMBLR_KEY = "kGpwZ5Y1FmBUOCTZztQvMQxX7QHMnspvY7V9ndL7o3yaMYCzft";
+// JSONP loader (for APIs without CORS, e.g. Tumblr).
+let _jpId=0;
+function jsonp(url){
+  return new Promise((resolve,reject)=>{
+    const cb="__sjp"+(++_jpId), sep=url.includes("?")?"&":"?";
+    const s=document.createElement("script");
+    const timer=setTimeout(()=>{cleanup();reject(new Error("jsonp timeout"));},9000);
+    function cleanup(){clearTimeout(timer);try{delete window[cb];}catch(e){}s.remove();}
+    window[cb]=d=>{cleanup();resolve(d);};
+    s.onerror=()=>{cleanup();reject(new Error("jsonp error"));};
+    s.src=url+sep+"jsonp="+cb; document.body.appendChild(s);
+  });
+}
+// encode/decode a composite id "<provider>:<native>"
+const cid = (p,n)=> p+":"+n;
+const splitId = id => { const i=id.indexOf(":"); return [id.slice(0,i), id.slice(i+1)]; };
+
+/* ---------- provider 1: community channels ---------- */
+const P_CHANNELS = {
+  key:"ch", base:"https://api.are.na/v2",
+  imageUrl(b){const i=b&&b.image;if(!i)return null;return (i.display||i.large||i.original||i.square||i.thumb||{}).url||null;},
+  async list(q,per,page=SESSION_PAGE){
+    const s=await getJSON(`${this.base}/search/channels?q=${encodeURIComponent(q)}&per=${per*2}&page=${page}`);
+    const chs=(s.channels||[]).filter(c=>c.status!=="private"&&c.length>0).slice(0,per);
+    const out=await Promise.all(chs.map(async ch=>{
+      try{const c=await getJSON(`${this.base}/channels/${ch.slug}/contents?per=8`);
+        const items=(c.contents||[]).filter(b=>b.class==="Image"||b.image).map(b=>this.item(b));
+        return this.coll(ch,items.filter(x=>x.src),q);
+      }catch(e){return null;}
+    }));
+    return out.filter(c=>c&&c.cover);
+  },
+  item(b){return{id:b.id,src:this.imageUrl(b),alt:b.title||b.generated_title||"Untitled",
+    sourceUrl:(b.source&&b.source.url)||null,by:b.connected_by_username||(b.user&&b.user.username)||null,medium:null,date:null};},
+  coll(ch,items,q){const u=ch.user||{};return{id:cid(this.key,ch.slug),provider:this.key,title:ch.title,
+    curator:u.slug||"unknown",curatorId:cid(this.key,u.slug||""),curatorName:u.full_name||u.username||"Unknown",
+    n:ch.length||items.length,cover:(items[0]||{}).src||null,items,q};},
+  async getColl(native){const ch=await getJSON(`${this.base}/channels/${native}`);
+    const c=await getJSON(`${this.base}/channels/${native}/contents?per=40`);
+    const items=(c.contents||[]).filter(b=>b.class==="Image"||b.image).map(b=>this.item(b)).filter(x=>x.src);
+    return this.coll(ch,items,ch.title);},
+  async getCurator(native){const u=await getJSON(`${this.base}/users/${native}`);
+    const cr=await getJSON(`${this.base}/users/${u.id}/channels?per=20`);
+    const chs=(cr.channels||[]).filter(c=>c.length>0).slice(0,10);
+    const cols=await Promise.all(chs.map(async ch=>{try{
+      const c=await getJSON(`${this.base}/channels/${ch.slug}/contents?per=6`);
+      const items=(c.contents||[]).filter(b=>b.class==="Image"||b.image).map(b=>this.item(b)).filter(x=>x.src);
+      return this.coll({...ch,user:u},items,ch.title);}catch(e){return null;}}));
+    return{curator:{handle:cid(this.key,u.slug),name:u.full_name||u.username||u.slug,
+      avatar:(u.avatar_image&&u.avatar_image.display&&u.avatar_image.display.url)||null,
+      bio:stripHtml(u.metadata&&u.metadata.description),followers:u.follower_count!=null?u.follower_count:null},
+      collections:cols.filter(c=>c&&c.cover)};},
+};
+
+/* ---------- providers 2 & 3: open-access museum collections (creator-grouped) ---------- */
+function museumCollFromGroup(key,g,q){
+  const items=g.works;
+  return {id:cid(key,"creator-"+g.cidKey),provider:key,title:items[0].alt,
+    curator:slug(g.name),curatorId:cid(key,"creator-"+g.cidKey),curatorName:g.name,
+    n:items.length,cover:items[0].src,items,q,_creatorQuery:g.name};
+}
+function groupByCreator(arts){
+  const m=new Map();
+  for(const a of arts){const name=a.by||"Unknown maker"; if(name==="Unknown maker")continue;
+    const k=a.cidKey||name; if(!m.has(k)) m.set(k,{cidKey:k,name,works:[]}); m.get(k).works.push(a);}
+  return [...m.values()].sort((x,y)=>y.works.length-x.works.length);
+}
+
+// Keep the Art Institute to design/graphics, not random paintings/objects.
+const AIC_DEPTS=["architecture and design","prints and drawings","photography and media","textiles","applied arts of europe"];
+function aicOk(a){const dep=(a.department_title||"").toLowerCase(); if(AIC_DEPTS.some(d=>dep.includes(d)))return true;
+  const t=((a.classification_title||"")+" "+(a.medium_display||"")+" "+(a.title||"")).toLowerCase();
+  return /poster|print|drawing|photograph|textile|typograph|graphic|design|letter|book|magazine/.test(t);}
+const P_AIC = {
+  key:"ai", base:"https://api.artic.edu/api/v1",
+  iiif:id=>`https://www.artic.edu/iiif/2/${id}/full/500,/0/default.jpg`,
+  fields:"id,title,image_id,artist_title,artist_id,date_display,date_start,date_end,medium_display,department_title,classification_title,is_public_domain",
+  norm(a){return{id:a.id,src:a.image_id?this.iiif(a.image_id):null,alt:a.title||"Untitled",
+    sourceUrl:`https://www.artic.edu/artworks/${a.id}`,by:a.artist_title||null,
+    cidKey:a.artist_id||a.artist_title,medium:a.medium_display||null,date:a.date_display||null};},
+  async search(q,limit,page=SESSION_PAGE){const d=await getJSON(`${this.base}/artworks/search?q=${encodeURIComponent(q)}&limit=${limit}&page=${page}&fields=${this.fields}`);
+    return (d.data||[]).filter(a=>a.image_id&&a.is_public_domain!==false&&!(a.date_end&&a.date_end<YEAR_FROM)&&!(YEAR_TO&&a.date_start&&a.date_start>YEAR_TO)&&aicOk(a)).map(a=>this.norm(a));},
+  async list(q,per,page=SESSION_PAGE){const arts=await this.search(q,100,page);
+    return groupByCreator(arts).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const id=native.replace(/^creator-/,"");
+    const d=await getJSON(`${this.base}/artworks/search?query[term][artist_id]=${encodeURIComponent(id)}&limit=40&fields=${this.fields}`);
+    const arts=(d.data||[]).filter(a=>a.image_id&&a.is_public_domain!==false&&!(a.date_end&&a.date_end<YEAR_FROM)&&!(YEAR_TO&&a.date_start&&a.date_start>YEAR_TO)&&aicOk(a)).map(a=>this.norm(a));
+    const g={cidKey:id,name:arts[0]?arts[0].by:"Unknown maker",works:arts};
+    return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const id=native.replace(/^creator-/,"");
+    let agent=null;try{const ad=await getJSON(`${this.base}/agents/${id}?fields=id,title,birth_date,death_date,description`);agent=ad.data;}catch(e){}
+    const coll=await this.getColl(native);
+    return{curator:{handle:cid(this.key,native),name:agent?agent.title:coll.curatorName,
+      avatar:null,bio:stripHtml(agent&&agent.description)||[agent&&agent.birth_date,agent&&agent.death_date].filter(Boolean).join(" – "),followers:null},
+      collections:coll.items.length?[coll]:[]};},
+};
+
+// Design museum: posters, graphics, typography, textiles, furniture, fashion.
+const P_VAM = {
+  key:"va", base:"https://api.vam.ac.uk/v2",
+  img:id=>`https://framemark.vam.ac.uk/collections/${id}/full/500,/0/default.jpg`,
+  norm(r){const id=r._primaryImageId; const maker=(r._primaryMaker&&r._primaryMaker.name)||null;
+    return{id:r.systemNumber,src:id?this.img(id):null,alt:r._primaryTitle||r.objectType||"Untitled",
+      sourceUrl:`https://collections.vam.ac.uk/item/${r.systemNumber}`,by:maker,
+      cidKey:slug(maker||""),medium:r.objectType||null,date:r._primaryDate||null};},
+  async search(q,limit,page=SESSION_PAGE){const d=await getJSON(`${this.base}/objects/search?q=${encodeURIComponent(q)}&page_size=${limit}&page=${page}&year_made_from=${YEAR_FROM}${YEAR_TO?`&year_made_to=${YEAR_TO}`:""}&images_exist=true`);
+    return (d.records||[]).map(r=>this.norm(r)).filter(x=>x.src&&x.by);},
+  async list(q,per,page=SESSION_PAGE){const arts=await this.search(q,80,page);
+    return groupByCreator(arts).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,"").replace(/-/g," ");
+    const arts=await this.search(name,40); const g={cidKey:slug(name),name:arts[0]?arts[0].by:name,works:arts};
+    return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const coll=await this.getColl(native);
+    return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},
+      collections:coll.items.length?[coll]:[]};},
+};
+
+// Order leads with the most design-forward sources.
+// --- optional stock-photo sources (active only when you add a key) ---
+const P_UNSPLASH = {
+  key:"un", base:"https://api.unsplash.com",
+  norm(p){return{id:p.id,src:p.urls&&(p.urls.regular||p.urls.small),alt:p.alt_description||"Untitled",
+    sourceUrl:p.links&&p.links.html,by:p.user&&p.user.name,cidKey:(p.user&&p.user.username)||slug(p.user&&p.user.name),
+    medium:"photograph",date:null};},
+  async search(q,page=SESSION_PAGE){const ak=keyGet("unsplash"); if(!ak)return [];
+    const d=await getJSON(`${this.base}/search/photos?query=${encodeURIComponent(q)}&per_page=30&page=${page}`,{Authorization:"Client-ID "+ak});
+    return (d.results||[]).map(p=>this.norm(p)).filter(x=>x.src&&x.by);},
+  async list(q,per,page=SESSION_PAGE){const a=await this.search(q,page); return groupByCreator(a).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,"").replace(/-/g," ");const a=await this.search(name);const g={cidKey:slug(name),name:a[0]?a[0].by:name,works:a};return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
+};
+const P_PEXELS = {
+  key:"px", base:"https://api.pexels.com/v1",
+  norm(p){return{id:p.id,src:p.src&&(p.src.large||p.src.medium),alt:p.alt||"Untitled",
+    sourceUrl:p.url,by:p.photographer,cidKey:slug(p.photographer||""),medium:"photograph",date:null};},
+  async search(q,page=SESSION_PAGE){const ak=keyGet("pexels"); if(!ak)return [];
+    const d=await getJSON(`${this.base}/search?query=${encodeURIComponent(q)}&per_page=30&page=${page}`,{Authorization:ak});
+    return (d.photos||[]).map(p=>this.norm(p)).filter(x=>x.src&&x.by);},
+  async list(q,per,page=SESSION_PAGE){const a=await this.search(q,page); return groupByCreator(a).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,"").replace(/-/g," ");const a=await this.search(name);const g={cidKey:slug(name),name:a[0]?a[0].by:name,works:a};return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
+};
+const P_PIXABAY = {
+  key:"pb", base:"https://pixabay.com/api",
+  norm(p){return{id:p.id,src:p.largeImageURL||p.webformatURL,alt:p.tags||"Untitled",
+    sourceUrl:p.pageURL,by:p.user,cidKey:slug(p.user||""),medium:"photograph",date:null};},
+  async search(q,page=SESSION_PAGE){const ak=keyGet("pixabay"); if(!ak)return [];
+    const d=await getJSON(`${this.base}/?key=${encodeURIComponent(ak)}&q=${encodeURIComponent(q)}&image_type=photo&per_page=30&page=${page}`);
+    return (d.hits||[]).map(p=>this.norm(p)).filter(x=>x.src&&x.by);},
+  async list(q,per,page=SESSION_PAGE){const a=await this.search(q,page); return groupByCreator(a).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,"").replace(/-/g," ");const a=await this.search(name);const g={cidKey:slug(name),name:a[0]?a[0].by:name,works:a};return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
+};
+
+// Wikimedia Commons — keyless, CORS via origin=*; huge breadth.
+const P_WIKI = {
+  key:"wk", base:"https://commons.wikimedia.org/w/api.php",
+  async search(q,page=SESSION_PAGE){
+    const offset=(page-1)*40;
+    const url=`${this.base}?action=query&generator=search&gsrsearch=${encodeURIComponent("filetype:bitmap "+q)}&gsrnamespace=6&gsrlimit=40&gsroffset=${offset}&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=600&format=json&origin=*`;
+    const d=await getJSON(url);
+    const pages=(d.query&&d.query.pages)?Object.values(d.query.pages):[];
+    return pages.map(pg=>{const ii=pg.imageinfo&&pg.imageinfo[0]; if(!ii)return null; const meta=ii.extmetadata||{};
+      const artist=stripHtml(meta.Artist&&meta.Artist.value)||null;
+      const ys=((meta.DateTimeOriginal&&meta.DateTimeOriginal.value)||(meta.DateTime&&meta.DateTime.value)||"").match(/\d{4}/);
+      const yr=ys?parseInt(ys[0],10):0;
+      return {id:"wk"+pg.pageid,src:ii.thumburl||ii.url,alt:(pg.title||"").replace(/^File:/,"").replace(/\.[a-z0-9]+$/i,""),
+        sourceUrl:ii.descriptionurl,by:artist,cidKey:slug(artist||""),medium:null,
+        date:meta.DateTimeOriginal?stripHtml(meta.DateTimeOriginal.value):null,_year:yr};
+    }).filter(x=>x&&x.src&&x.by&&!(x._year&&x._year<YEAR_FROM)&&!(YEAR_TO&&x._year&&x._year>YEAR_TO));
+  },
+  async list(q,per,page=SESSION_PAGE){const a=await this.search(q,page);return groupByCreator(a).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,"").replace(/-/g," ");const a=await this.search(name);const g={cidKey:slug(name),name:a[0]?a[0].by:name,works:a};return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
+};
+
+// Tumblr — designer/artist curation via tagged photo posts. JSONP bypasses CORS;
+// needs a free API key (consumer key), entered in the sources panel.
+const P_TUMBLR = {
+  key:"tb", base:"https://api.tumblr.com/v2",
+  norm(p){const ph=p.photos&&p.photos[0]; const src=ph&&((ph.original_size&&ph.original_size.url)||(ph.alt_sizes&&ph.alt_sizes[0]&&ph.alt_sizes[0].url));
+    return {id:"tb"+p.id,src,alt:(p.summary||(p.tags&&p.tags[0])||"Untitled").slice(0,80),sourceUrl:p.post_url,
+      by:p.blog_name,cidKey:slug(p.blog_name||""),medium:null,date:null};},
+  async search(q){const ak=keyGet("tumblr")||TUMBLR_KEY; if(!ak)return [];
+    try{const d=await jsonp(`${this.base}/tagged?tag=${encodeURIComponent(q)}&limit=20&api_key=${encodeURIComponent(ak)}`);
+      const posts=(d&&d.response)||[];
+      return posts.filter(p=>p.type==="photo"&&p.photos&&p.photos.length).map(p=>this.norm(p)).filter(x=>x.src&&x.by);
+    }catch(e){return [];}},
+  async list(q,per){const a=await this.search(q); return groupByCreator(a).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,""); const ak=keyGet("tumblr")||TUMBLR_KEY;
+    if(!ak) return museumCollFromGroup(this.key,{cidKey:native,name,works:[]},name);
+    try{const d=await jsonp(`${this.base}/blog/${encodeURIComponent(name)}.tumblr.com/posts/photo?limit=20&api_key=${encodeURIComponent(ak)}`);
+      const posts=(d&&d.response&&d.response.posts)||[];
+      const a=posts.filter(p=>p.photos&&p.photos.length).map(p=>this.norm(p)).filter(x=>x.src);
+      return museumCollFromGroup(this.key,{cidKey:native,name:a[0]?a[0].by:name,works:a},name);
+    }catch(e){return museumCollFromGroup(this.key,{cidKey:native,name,works:[]},name);}},
+  async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
+};
+
+// Met Museum — keyless, no key needed. Museum-quality art/design/photography.
+const P_MET = {
+  key:"me", base:"https://collectionapi.metmuseum.org/public/collection/v1",
+  norm(o){return{id:"me"+o.objectID,src:o.primaryImageSmall||o.primaryImage,alt:o.title||"Untitled",
+    sourceUrl:o.objectURL,by:o.artistDisplayName||o.culture||o.department||null,
+    cidKey:slug(o.artistDisplayName||o.culture||o.department||""),medium:o.medium||null,date:o.objectDate||null,_year:o.objectEndDate||0};},
+  async search(q,page=SESSION_PAGE){
+    const s=await getJSON(`${this.base}/search?q=${encodeURIComponent(q)}&hasImages=true`);
+    const ids=(s.objectIDs||[]); if(!ids.length)return [];
+    const start=((page-1)*12)%Math.max(1,ids.length); const slice=ids.slice(start,start+12);
+    const objs=await Promise.allSettled(slice.map(id=>getJSON(`${this.base}/objects/${id}`)));
+    return objs.filter(o=>o.status==="fulfilled").map(o=>this.norm(o.value))
+      .filter(x=>x.src&&x.by&&!(x._year&&x._year<YEAR_FROM)&&!(YEAR_TO&&x._year&&x._year>YEAR_TO));
+  },
+  async list(q,per,page=SESSION_PAGE){const a=await this.search(q,page);return groupByCreator(a).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,"").replace(/-/g," ");const a=await this.search(name);const g={cidKey:slug(name),name:a[0]?a[0].by:name,works:a};return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
+};
+
+// Wikimedia stays defined but is OUT of the default feed (too much random content).
+const PROVIDERS = {ch:P_CHANNELS, tb:P_TUMBLR, ai:P_AIC, va:P_VAM, me:P_MET, un:P_UNSPLASH, px:P_PEXELS, pb:P_PIXABAY, wk:P_WIKI};
+const PROV_ORDER = ["ch","tb","ai","va","me","un","px","pb"];
+
+/* ---------- unified Sourced API (provider-agnostic) ---------- */
+// Trendy 2026 defaults — drawn from what's actually rising on inspiration
+// platforms (bold type/brutalism, maximalism, riso, collage/zine, retro-futurism,
+// Y2K, monochrome, analog). Label -> search query.
+// Visible filter pills — trendiest / most-searched only (two lines).
+// Everything else is fetched via FEATURED_SEEDS / search (see topics.md).
+// Curatorial lenses, not medium buckets: movements / techniques / moods that
+// designers actually browse by, and that the curator sources surface well.
+// Full pool of lenses. Featured is pinned; 9 of the rest are shown at random per load.
+const CAT_Q = {Featured:"design",Brutalist:"brutalist",Bauhaus:"bauhaus",Swiss:"swiss design",
+  Risograph:"risograph",Collage:"collage",Y2K:"y2k",Maximal:"maximalism",Monochrome:"monochrome",
+  Surreal:"surrealism",Vaporwave:"vaporwave",Acid:"acid graphics",Psychedelic:"psychedelic",
+  Memphis:"memphis design",Constructivist:"constructivism",Deco:"art deco",Minimal:"minimalism",
+  "Mid-century":"mid century modern"};
+const CATS = Object.keys(CAT_Q);
+
+// Rotating hero word.
+// Less-obvious design / product / graphic / tech quotes — one per page load.
+const DESIGN_QUOTES = [
+  {t:"Recognizing the need is the primary condition for design.",a:"Charles Eames"},
+  {t:"Design is the conscious effort to impose a meaningful order.",a:"Victor Papanek"},
+  {t:"There is no design without discipline. There is no discipline without intelligence.",a:"Massimo Vignelli"},
+  {t:"The public is more familiar with bad design than good design.",a:"Paul Rand"},
+  {t:"Don't design for everyone. All you do is average it down to mediocrity.",a:"Frank Chimero"},
+  {t:"Design depends largely on constraints.",a:"Charles Eames"},
+  {t:"The role of the designer is that of a good host anticipating the needs of his guests.",a:"Charles Eames"},
+  {t:"Design must seduce, shape, and evoke an emotional response.",a:"April Greiman"},
+  {t:"Less, but better.",a:"Dieter Rams"},
+  // Graphic / type
+  {t:"Type is a beautiful group of letters, not a group of beautiful letters.",a:"Matthew Carter"},
+  {t:"Typography is the craft of endowing human language with a durable visual form.",a:"Robert Bringhurst"},
+  {t:"White space is to be regarded as an active element, not a passive background.",a:"Jan Tschichold"},
+  // Product / tech
+  {t:"Simplicity is prerequisite for reliability.",a:"Edsger W. Dijkstra"},
+  {t:"Make it work, make it right, make it fast.",a:"Kent Beck"},
+  {t:"The most dangerous phrase in the language is, 'We've always done it this way.'",a:"Grace Hopper"},
+  {t:"The best interface is no interface.",a:"Golden Krishna"},
+  {t:"If you think good design is expensive, you should look at the cost of bad design.",a:"Ralf Speth"},
+  {t:"Programs must be written for people to read.",a:"Harold Abelson"},
+];
+// Bright, vibrant accents — one picked per page load.
+const VIBRANT = ["#FF5A1F","#FF2D78","#8B5CF6","#2563EB","#06B6D4","#10B981",
+  "#F43F5E","#F59E0B","#0EA5E9","#D946EF","#EF4444","#22C55E"];
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+// Different page of results each page load -> always fresh content.
+const SESSION_PAGE = 1 + Math.floor(Math.random()*3);
+// Year window. Home/featured is always 1920s and newer; advanced search can
+// narrow it to a single decade by setting YEAR_FROM/YEAR_TO.
+const HOME_FLOOR = 1920;
+let YEAR_FROM = HOME_FLOOR;
+let YEAR_TO = null;
+// Advanced-search era buckets: [label, from, to]. First spans 1900s–50s, then
+// two-decade intervals up to the present.
+const ERA_BUCKETS = [
+  ["1900s–50s",1900,1959],
+  ["1960s–70s",1960,1979],
+  ["1980s–90s",1980,1999],
+  ["2000s–10s",2000,2019],
+  ["2020s +",2020,null],
+];
+const FEATURED_SEEDS = ["design","graphic design","poster","typography","editorial",
+  "photography","ceramics","ux design","web design","art","pattern","illustration",
+  "fashion","sportswear","music","album cover","book design","magazine","brand identity"];
+
+// --- ranking layer ---------------------------------------------------------
+// Curated sources rank higher than generic ones.
+const PROV_WEIGHT = {ch:3, tb:3, ai:2, va:2, me:2, un:1, px:1, pb:1, wk:0.4};
+// Light synonym expansion for recall + relevance.
+const SYN = {
+  poster:["poster","print","affiche"], typography:["typography","type","lettering","typeface","font"],
+  brutalist:["brutalist","brutalism","concrete"], collage:["collage","cutout","montage","zine"],
+  editorial:["editorial","magazine","layout","spread"], fashion:["fashion","apparel","garment","runway"],
+  photography:["photography","photo","photograph"], maximalist:["maximalist","maximalism","ornate"],
+  monochrome:["monochrome","monotone","black and white"], risograph:["risograph","riso"],
+  vaporwave:["vaporwave","retro","y2k"], analog:["analog","film","grain","35mm"],
+  green:["green","sage","olive","emerald"], blue:["blue","navy","cobalt","azure"],
+  red:["red","crimson","scarlet"], pink:["pink","rose","blush"], orange:["orange","amber","terracotta"],
+};
+function expandTerms(text){ const ws=(text||"").toLowerCase().split(/\s+/).filter(Boolean); const out=new Set();
+  for(const w of ws){ out.add(w); (SYN[w]||[]).forEach(s=>out.add(s)); } return [...out]; }
+function relevance(col, terms){
+  const hay=((col.title||"")+" "+(col.curatorName||"")+" "+(col.items||[]).map(i=>(i.alt||"")+" "+(i.medium||"")).join(" ")).toLowerCase();
+  let hits=0; for(const t of terms){ if(hay.includes(t)) hits++; } return hits;
+}
+
+async function listCollections(query, limit=24, page=SESSION_PAGE, rankText){
+  const per=Math.max(8, Math.ceil(limit/PROV_ORDER.length)+5);
+  const results = await Promise.allSettled(PROV_ORDER.map(k=>PROVIDERS[k].list(query, per, page)));
+  const lists = results.map(r=>r.status==="fulfilled"?r.value:[]);
+  const merged=[]; let i=0; let added=true;
+  while(added){added=false; for(const l of lists){ if(l[i]){merged.push(l[i]); added=true;} } i++;}
+  if(merged.length===0) throw new Error("all sources empty");
+  if(rankText){ // real query: keep on-topic results, rank by relevance + source quality
+    const terms=expandTerms(rankText);
+    const scored=merged.map(c=>({c,s:relevance(c,terms)}));
+    const hits=scored.filter(x=>x.s>0);
+    const pool=hits.length>=8?hits:scored; // drop unrelated when we have enough matches
+    pool.sort((a,b)=> (b.s*5+(PROV_WEIGHT[b.c.provider]||1)) - (a.s*5+(PROV_WEIGHT[a.c.provider]||1)) );
+    return pool.map(x=>x.c).slice(0, limit);
+  }
+  // browse: curated sources float up, with randomness for freshness
+  return merged.map(c=>[(PROV_WEIGHT[c.provider]||1)+Math.random(), c]).sort((a,b)=>b[0]-a[0]).map(x=>x[1]).slice(0, limit);
+}
+async function getCollection(id){const [p,n]=splitId(id); const c=await PROVIDERS[p].getColl(n);
+  let related=[]; try{ related=(await listCollections(c.q||c.title.split(/\s+/)[0],6)).filter(x=>x.id!==c.id).slice(0,4);}catch(e){}
+  return {collection:c, related};}
+async function getCurator(handle){const [p,n]=splitId(handle); return PROVIDERS[p].getCurator(n);}
+
+// Real colour search: build a varied pool from the CORS-clean sources (so the
+// canvas can read pixels), measure each cover's true dominant colour, and rank
+// by distance to the picked colour.
+// Colour search, optionally narrowed by a text query (e.g. "typography posters").
+// Pools the CORS-readable sources so the canvas can measure true dominant colour.
+async function colorSearchCollections(hex, query, limit=24){
+  const target=hexToRgb(hex);
+  let pool=[];
+  if(query){
+    const tasks=[P_VAM.list(query,14),P_AIC.list(query,14)];
+    if(keyGet("unsplash")) tasks.push(P_UNSPLASH.list(query,12));
+    const r=await Promise.allSettled(tasks);
+    for(const x of r){ if(x.status==="fulfilled") pool.push(...x.value); }
+  } else {
+    const seeds=["poster","textile","pattern","abstract","photograph","graphic","print","colour","landscape","portrait"];
+    const tasks=[]; for(const q of seeds){ tasks.push(P_VAM.list(q,4)); tasks.push(P_AIC.list(q,4)); }
+    const r=await Promise.allSettled(tasks);
+    for(const x of r){ if(x.status==="fulfilled") pool.push(...x.value); }
+  }
+  const seen=new Set(); pool=pool.filter(c=>c.cover&&!seen.has(c.id)&&seen.add(c.id));
+  const scored=[];
+  await Promise.all(pool.slice(0,110).map(async c=>{const a=await analyzeImage(c.cover);if(!a)return;
+    c.dom=a.hex;c.colorScore=1-Math.min(1,Math.sqrt(colorDist2(a.rgb,target))/441);scored.push(c);}));
+  scored.sort((x,y)=>y.colorScore-x.colorScore);
+  if(!scored.length) throw new Error("no colour-readable images");
+  return scored.slice(0,limit);
+}
+// Split a query into a colour (if any colour word appears) and the rest.
+function parseSearch(raw){
+  const words=(raw||"").trim().toLowerCase().split(/\s+/).filter(Boolean);
+  let color=null; const rest=[];
+  for(const w of words){ const m=NAMED_COLORS.find(([n])=>n===w); if(m&&!color) color=m[1]; else rest.push(w); }
+  return {color, text:rest.join(" ")};
+}
+
+/* ============================================================================
+   LLM — generate one image-generation prompt from a set of selected images.
+   Uses a vision model in the browser with a user-supplied key (stored locally),
+   and falls back to a metadata-only draft when no key is set.
+============================================================================ */
+const LLM_KEY_STORE = "sourced.llmKey";
+const LLM_MODEL = "claude-sonnet-4-6";
+function getKey(){try{return localStorage.getItem(LLM_KEY_STORE)||"";}catch(e){return "";}}
+function setKey(k){try{localStorage.setItem(LLM_KEY_STORE,k);}catch(e){}}
+
+const PROMPT_BRIEF =
+  "You are an art director writing ONE image-generation prompt from these reference images. Read them as a single mood, then write a vivid, specific, paste-ready prompt of 70–110 words as flowing prose (no labels or lists), following this spine:\n"+
+  "1) OPENING — lead with the SUBJECT and the primary STYLE/medium (the most load-bearing words first).\n"+
+  "2) BODY — colour palette (name the key colours), then light and mood, composition and framing, texture and materials, and era/reference.\n"+
+  "3) CONNECTION — close with the unifying intent (why it coheres) plus technical modifiers (aspect ratio, finish, level of detail).\n"+
+  "Commit to ONE clear output FORMAT and name it — poster, editorial spread, risograph print, studio photograph, 3D render, woven textile, cut-paper collage, packaging, record sleeve, etc. Open AND close differently every single time; never reuse a stock opening or ending, and never start with the same word. Be concrete and a little unexpected; surface a specific detail you actually see. "+
+  "Describe a real visual SUBJECT or scene — never a category word like 'graphic design' or 'general' as the subject. Do NOT include any names, signatures, captions, or category words meant to be rendered as text in the image; keep lettering out entirely unless it is genuinely central to the references. "+
+  "Avoid filler words ('cohesive','aesthetic','visually striking','seamless'). Do not name or imitate real artists. Output only the prompt.";
+// Gather factual metadata from the selected images, incl. extracted dominant colours.
+// Drop filenames, UUIDs, hashes and "Untitled" so they never become a subject.
+const isBadTitle = t => !t || /\.(png|jpe?g|gif|webp|svg|tiff?)$/i.test(t)
+  || /^[0-9a-f]{8}-[0-9a-f]{4}/i.test(t) || /^[0-9a-f]{12,}$/i.test(t)
+  || /[•·|]/.test(t)
+  || /^(general|graphic design|design|untitled|misc(ellaneous)?|various|collection|set|inspiration|reference|mood\s?board)\b/i.test(t.trim())
+  || /^(img|dsc|image|untitled|screenshot)[\s_\-0-9]*$/i.test(t.trim());
+async function collectMeta(items){
+  const titles=[...new Set(items.map(i=>i.alt).filter(t=>t&&!isBadTitle(t)))].slice(0,6);
+  const media=[...new Set(items.map(i=>i.medium).filter(Boolean))].slice(0,4);
+  const makers=[...new Set(items.map(i=>i.by).filter(Boolean))].slice(0,4);
+  const dates=[...new Set(items.map(i=>i.date).filter(Boolean))].slice(0,4);
+  const cols=[]; await Promise.all(items.slice(0,8).map(async it=>{const a=await analyzeImage(it.src); if(a)cols.push(nearestColorName(a.hex));}));
+  return {titles, media, makers, dates, palette:[...new Set(cols)].slice(0,5)};
+}
+function metaSummary(m){
+  if(!m) return "";
+  const p=[];
+  if(m.titles&&m.titles.length) p.push("titles: "+m.titles.join("; "));
+  if(m.media&&m.media.length) p.push("media: "+m.media.join(", "));
+  if(m.dates&&m.dates.length) p.push("approx era: "+m.dates.join(", "));
+  if(m.palette&&m.palette.length) p.push("extracted palette: "+m.palette.join(", "));
+  return p.join(" | ");
+}
+
+async function generatePromptLLM(items, key, meta){
+  const ms=metaSummary(meta);
+  const content=[{type:"text",text:PROMPT_BRIEF+(ms?("\n\nReference metadata from the images (use as factual grounding, but describe what you actually see): "+ms):"")}];
+  for(const it of items.slice(0,8)){ if(it.src) content.push({type:"image",source:{type:"url",url:it.src}}); }
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
+    headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:LLM_MODEL,max_tokens:600,temperature:1,messages:[{role:"user",content}]})});
+  if(!r.ok){let m="";try{m=(await r.json()).error?.message||"";}catch(e){} throw new Error("Model "+r.status+(m?": "+m:""));}
+  const d=await r.json(); return (d.content||[]).map(b=>b.text||"").join("").trim();
+}
+function draftPromptFromMetadata(items, meta){
+  meta = meta || {titles:[...new Set(items.map(i=>i.alt).filter(t=>t&&!isBadTitle(t)))].slice(0,4),
+    media:[...new Set(items.map(i=>i.medium).filter(Boolean))].slice(0,2),
+    makers:[...new Set(items.map(i=>i.by).filter(Boolean))].slice(0,2), dates:[], palette:[]};
+  const titles=meta.titles||[], makers=meta.makers||[], pal=(meta.palette||[]).slice(0,4), dates=(meta.dates||[]).slice(0,2);
+  const mediaMeta=(meta.media||[]).map(m=>String(m).toLowerCase()).slice(0,2);
+  const R=a=>a[Math.floor(Math.random()*a.length)];
+  const cap=s=>s.replace(/^./,c=>c.toUpperCase());
+  const openers=[
+    "One frame that distils the whole set —","Picture a single image holding this mood —",
+    "Render one scene built from these references —","A lone composition charged with this spirit —",
+    "Translate the entire board into a single image —","Conjure one piece from these references —",
+    "Distil the set into a single frame —"
+  ];
+  const formats=["a screen-printed poster","an editorial magazine spread","a matte risograph print","a studio photograph","a 3D-rendered still","a hand-set letterpress piece","a woven textile panel","a cut-paper collage","a cyanotype print","a gouache study","a vinyl record sleeve","a packaging mockup"];
+  const fmt = mediaMeta.length ? mediaMeta.join(" / ") : R(formats);
+  const palLines = pal.length ? [`Palette of ${pal.join(", ")}, used with intent.`,`Built on ${pal.join(", ")}, colour doing the work.`,`Colour led by ${pal.join(", ")}.`] : [""];
+  const lights=["light raking across the forms","flat, even studio light","low directional light with deep shadow","soft daylight with gentle falloff","hard noon light and crisp edges","diffuse overcast glow"];
+  const comps=["deliberate composition with clear hierarchy","off-grid layout with confident negative space","tight, centred framing","asymmetric balance and generous margins","dense, layered arrangement"];
+  const tex=["tactile texture and honest materials","fine grain and visible paper tooth","smooth, matte surfaces","worn, analogue imperfection","crisp vector flatness against subtle noise"];
+  const connect=["It coheres through one disciplined mood.","Everything bends to a single intent.","Held together by one unwavering tone.","Restraint is what ties it together.","A single idea runs through every element."];
+  const tech=["4:5, high detail, editorial finish.","3:4, fine grain.","1:1, crisp and considered.","2:3, high contrast.","16:9, soft film grain.","4:5, muted matte finish."];
+  const subject = (titles[0] && !isBadTitle(titles[0])) ? titles[0] : "an original abstract composition";
+  let s = `${R(openers)} ${subject}, as ${fmt}.`;
+  const pl=R(palLines); if(pl) s += " "+pl;
+  s += ` ${cap(R(lights))}; ${R(comps)}.`;
+  s += ` ${cap(R(tex))}; clean surfaces, no stray lettering or labels.`;
+  if(dates.length) s += ` Period cues from the ${dates.join(", ")} era.`;
+  s += ` ${R(connect)} ${R(tech)}`;
+  return s;
+}
+
+/* ============================================================================
+   UI
+============================================================================ */
+const SelCtx = createContext(null);
+const useSel = ()=>useContext(SelCtx);
+
+function useRoute(){
+  const [hash,setHash]=useState(window.location.hash||"#/explore");
+  useEffect(()=>{const f=()=>setHash(window.location.hash||"#/explore");
+    window.addEventListener("hashchange",f);return()=>window.removeEventListener("hashchange",f);},[]);
+  const parts=hash.replace(/^#\//,"").split("/");
+  if(parts[0]==="c"&&parts[1]) return{name:"collection",id:decodeURIComponent(parts.slice(1).join("/"))};
+  if(parts[0]==="u"&&parts[1]) return{name:"curator",handle:decodeURIComponent(parts.slice(1).join("/"))};
+  return{name:"explore"};
+}
+const go = href => { window.location.hash = href; window.scrollTo(0,0); };
+const linkColl = id => `#/c/${encodeURIComponent(id)}`;
+const linkCur  = h  => `#/u/${encodeURIComponent(h)}`;
+// Make a short, clean collection title from messy source metadata (captions etc.).
+function displayTitle(c){
+  if(!c) return "Untitled";
+  let t=(c.title||"").replace(/https?:\/\/\S+/g,"").replace(/[@#][\w.\-]+/g,"").replace(/["“”']/g,"").replace(/\s+/g," ").trim();
+  if(/\.(png|jpe?g|gif|webp|svg|tiff?)$/i.test(t)||/^[0-9a-f]{8}-[0-9a-f]{4}/i.test(t)||/^[0-9a-f]{12,}$/i.test(t)) t="";
+  const words=t.split(" ").filter(Boolean);
+  if(words.length>5) t=words.slice(0,5).join(" ");
+  t=t.replace(/[\s,;:\-–—.]+$/,"");
+  if(!t){ const who=c.curatorName||c.curator; t = who?("Selected by "+who):"A selection"; }
+  return t.charAt(0).toUpperCase()+t.slice(1);
+}
+
+function Img({src,alt,className,style}){
+  const [err,setErr]=useState(false);
+  if(err||!src) return <div className={className} style={{...style,background:"var(--ambersoft)"}} aria-label={alt}/>;
+  return <img src={src} alt={alt} className={className} style={style} loading="lazy" decoding="async" onError={()=>setErr(true)}/>;
+}
+const SPAN_H=[320,220,208,220,320,208,220,320,208,320,220,208];
+
+function Card({c,i}){
+  const {has,toggle}=useSel();
+  const coverItem={id:"cover:"+c.id,src:c.cover,alt:c.title,by:c.curatorName,medium:null,date:null};
+  const picked=c.cover?has(coverItem):false;
+  return (
+    <div className="card">
+      <div className={"cover"+(picked?" picked":"")} style={{height:SPAN_H[i%SPAN_H.length]}} onClick={()=>go(linkColl(c.id))}>
+        <Img src={c.cover} alt={c.title} style={{height:"100%"}}/>
+        {c.cover&&<div className={"sel"+(picked?" on":"")} title="Add to collection"
+          onClick={e=>{e.preventDefault();e.stopPropagation();toggle(coverItem);}}><span className="material-symbols-outlined">{picked?"check":"add"}</span></div>}
+        <div className="strip">
+          <span className="chip">@{c.curator}</span>
+          <span className="chip">{c.n} elements</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Header(){
+  return (
+    <header>
+      <a className="wm logo" style={{fontSize:22}} onClick={()=>go("#/explore")}>Sourced</a>
+      <nav>
+        <span style={{color:"var(--ink)",fontWeight:500,cursor:"default"}}>Log in</span>
+        <button className="btn-dark">Sign up</button>
+      </nav>
+    </header>
+  );
+}
+
+function ErrorState({onRetry}){
+  return (<div className="empty">couldn't load the feed right now.
+    <div style={{fontFamily:"'IBM Plex Mono',monospace",fontSize:12,marginTop:8,fontStyle:"normal"}}>
+      check your connection, or open this file over http (some browsers block requests from file://).</div>
+    <button className="retry" onClick={onRetry}>Retry</button></div>);
+}
+
+function Explore({searchOpen,setSearchOpen,onSources}){
+  const [input,setInput]=useState(""),[query,setQuery]=useState(""),[cat,setCat]=useState("Featured");
+  const [nonce,setNonce]=useState(0);
+  const featuredQ=useMemo(()=>pick(FEATURED_SEEDS),[]);
+  const heroQuote=useMemo(()=>pick(DESIGN_QUOTES),[]);
+  const [catsShown,setCatsShown]=useState(["Featured","Brutalist","Bauhaus","Swiss","Risograph","Collage","Y2K","Maximal","Monochrome","Surreal"]);
+  const triedRef=useRef(new Set());
+  const [advColor,setAdvColor]=useState(""),[hexIn,setHexIn]=useState("");
+  const [eraIdx,setEraIdx]=useState(-1); // -1 = Any (home floor)
+  const [items,setItems]=useState([]);
+  const [status,setStatus]=useState("loading"); // loading | idle | error
+  const [more,setMore]=useState(false);
+  const [end,setEnd]=useState(false);
+  const pageRef=useRef(SESSION_PAGE), reqRef=useRef(0);
+  const colCountFor=()=>{ if(typeof window==="undefined")return 4; const w=window.innerWidth;
+    return w<=480?2 : w<=820?3 : w<=1200?4 : w<=1600?5 : w<=2100?6 : 7; };
+  const [colCount,setColCount]=useState(colCountFor);
+  useEffect(()=>{ const f=()=>setColCount(colCountFor()); window.addEventListener("resize",f); return ()=>window.removeEventListener("resize",f); },[]);
+  // Stable masonry: items go into fixed columns by index, so appending on scroll
+  // never reshuffles existing cards (CSS multi-column reflow was the cause of jumps).
+  const columns=useMemo(()=>{ const cols=Array.from({length:colCount},()=>[]);
+    items.forEach((c,i)=>cols[i%colCount].push([c,i])); return cols; },[items,colCount]);
+
+  useEffect(()=>{const t=setTimeout(()=>setQuery(input),350);return()=>clearTimeout(t);},[input]);
+
+  // Typed words (incl. colours like "green") are a TEXT meta-search across all
+  // sources. Pixel-colour matching only happens via the advanced colour picker.
+  const color = advColor;
+  const catQ = cat!=="Featured"?CAT_Q[cat]:null;
+  const textQ = query.trim() || catQ || featuredQ || "design";
+  const colorText = query.trim() || catQ || null;
+  const rankQ = query.trim() || catQ || null;
+  const applyHex=()=>{ if(isHex(hexIn)) setAdvColor(normHex(hexIn)); };
+  const setYears=()=>{ if(eraIdx>=0){YEAR_FROM=ERA_BUCKETS[eraIdx][1];YEAR_TO=ERA_BUCKETS[eraIdx][2];}else{YEAR_FROM=HOME_FLOOR;YEAR_TO=null;} };
+
+  // reset + initial load
+  useEffect(()=>{ const rid=++reqRef.current; setYears();
+    setStatus("loading"); setItems([]); setEnd(false); pageRef.current=SESSION_PAGE;
+    const run = color ? colorSearchCollections(color,colorText,24) : listCollections(textQ,24,SESSION_PAGE,rankQ);
+    run.then(cols=>{ if(rid!==reqRef.current)return; setItems(cols); setStatus("idle"); if(color) setEnd(true);
+      // Guarantee filters carry relevant content: swap a thin lens for a fresh one.
+      if(!color && !query.trim() && cat!=="Featured" && cols.length<3 && !triedRef.current.has(cat)){
+        triedRef.current.add(cat);
+        const used=new Set(catsShown);
+        const backup=Object.keys(CAT_Q).find(k=>k!=="Featured"&&!used.has(k)&&!triedRef.current.has(k));
+        if(backup){ setCatsShown(prev=>prev.map(c=>c===cat?backup:c)); setCat(backup); }
+      }
+    }).catch(()=>{ if(rid!==reqRef.current)return; setStatus("error"); });
+  },[cat,query,advColor,eraIdx,featuredQ,nonce]);
+
+  const loadMore=useCallback(()=>{
+    if(color||end||more||status!=="idle")return;
+    setMore(true); setYears(); const np=pageRef.current+1;
+    listCollections(textQ,24,np,rankQ).then(cols=>{
+      setItems(prev=>{const seen=new Set(prev.map(x=>x.id));const add=cols.filter(x=>!seen.has(x.id));
+        if(!add.length) setEnd(true); return [...prev,...add];});
+      pageRef.current=np; setMore(false);
+    }).catch(()=>{setMore(false);setEnd(true);});
+  },[textQ,color,end,more,status,eraIdx]);
+
+  useEffect(()=>{ if(color||end||status!=="idle")return;
+    const onScroll=()=>{ if(window.innerHeight+window.scrollY >= document.body.offsetHeight-900) loadMore(); };
+    window.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+    return ()=>window.removeEventListener("scroll",onScroll);
+  },[loadMore,color,end,status]);
+
+  return (
+    <div>
+      <div className="hero">
+        <h1>Where taste gets credit.</h1>
+        <p>“{heroQuote.t}” — {heroQuote.a}</p>
+        <div className="search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{flexShrink:0,opacity:.4}}>
+            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+          <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Search by style, colour, or theme"/>
+        </div>
+        <div className="pills">
+          {catsShown.map(c=>(
+            <button key={c} className={"pill"+(c===cat?" active":"")} onClick={()=>{setCat(c);setInput("");setQuery("");}}>{c}</button>))}
+          <button className="tunebtn" title="Filter by era" onClick={()=>setSearchOpen(true)}><span className="material-symbols-outlined">discover_tune</span></button>
+        </div>
+      </div>
+      <div className="feed">
+        {status==="loading"?<div style={{display:"flex",gap:18,alignItems:"flex-start"}}>
+          {Array.from({length:colCount}).map((_,ci)=>(<div key={ci} style={{flex:1,minWidth:0}}>
+            {Array.from({length:3}).map((_,i)=><div className="card" key={i}><div className="skel" style={{height:[320,220,260][(ci+i)%3]}}/></div>)}
+          </div>))}</div>
+          :status==="error"?<ErrorState onRetry={()=>setNonce(n=>n+1)}/>
+          :items.length===0?<div className="empty">nothing here yet — try a different search</div>
+          :<div style={{display:"flex",gap:18,alignItems:"flex-start"}}>
+            {columns.map((col,ci)=>(<div key={ci} style={{flex:1,minWidth:0}}>
+              {col.map(([c,i])=><Card key={c.id} c={c} i={i}/>)}
+            </div>))}
+          </div>}
+        {more&&<div className="loader"><span className="material-symbols-outlined loadericon">package_2</span></div>}
+      </div>
+      {searchOpen&&(
+        <div className="overlay" style={{alignItems:"flex-start"}} onClick={()=>setSearchOpen(false)}>
+          <div className="modal" style={{marginTop:"9vh",maxWidth:780}} onClick={e=>e.stopPropagation()}>
+            <h3>Filter by era</h3>
+            <div className="msub">Show work from a chosen decade range.</div>
+            <div className="adv-row" style={{flexWrap:"nowrap",overflowX:"auto"}}><span className="adv-lab">Era</span>
+              <button className={"opt"+(eraIdx<0?" active":"")} onClick={()=>setEraIdx(-1)}>Any</button>
+              {ERA_BUCKETS.map(([lab],i)=>(<button key={lab} className={"opt"+(eraIdx===i?" active":"")} onClick={()=>setEraIdx(eraIdx===i?-1:i)}>{lab}</button>))}
+            </div>
+            <div className="mfoot"><button className="btn btn-primary" onClick={()=>setSearchOpen(false)}>Show results</button></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Tile({it}){
+  const {has,toggle}=useSel(); const picked=has(it);
+  const tile=(
+    <div className={"tile"+(picked?" picked":"")}>
+      <Img src={it.src} alt={it.alt} style={{height:208}}/>
+      <div className={"sel"+(picked?" on":"")} title="Add to collection"
+        onClick={e=>{e.preventDefault();e.stopPropagation();toggle(it);}}><span className="material-symbols-outlined">{picked?"check":"add"}</span></div>
+    </div>);
+  return it.sourceUrl? <a href={it.sourceUrl} target="_blank" rel="noopener noreferrer" title={it.alt}>{tile}</a> : <div>{tile}</div>;
+}
+
+function CollectionDetail({id}){
+  const [st,setSt]=useState({loading:true,error:false,col:null,related:[]});
+  const [relRanked,setRelRanked]=useState([]);
+  const [saved,setSaved]=useState(false),[following,setFollowing]=useState(false),[nonce,setNonce]=useState(0);
+  const {selectMany}=useSel();
+  useEffect(()=>{let on=true;setSt({loading:true,error:false,col:null,related:[]});setRelRanked([]);
+    getCollection(id).then(r=>on&&setSt({loading:false,error:false,col:r.collection,related:r.related}))
+      .catch(()=>on&&setSt({loading:false,error:true,col:null,related:[]}));
+    return()=>{on=false;};},[id,nonce]);
+  // re-rank related by real visual similarity (tone/hue histogram cosine)
+  useEffect(()=>{ if(!st.col||!st.related.length){setRelRanked(st.related||[]);return;} let on=true;
+    (async()=>{ const base=await analyzeImage(st.col.cover);
+      const scored=await Promise.all(st.related.map(async r=>{const a=await analyzeImage(r.cover);
+        return {...r,vscore:(base&&a)?cosine(base.vec,a.vec):null};}));
+      if(base&&scored.some(s=>s.vscore!=null)) scored.sort((x,y)=>(y.vscore||0)-(x.vscore||0));
+      if(on)setRelRanked(scored); })();
+    return()=>{on=false;}; },[st.col,st.related]);
+  if(st.loading) return(<div className="shell"><button className="backbtn" onClick={()=>go("#/explore")}>← Go back</button>
+    <div className="skel" style={{height:36,width:280,marginTop:16}}/>
+    <div className="dgrid">{Array.from({length:8}).map((_,i)=><div key={i} className="skel" style={{height:208}}/>)}</div></div>);
+  if(st.error||!st.col) return(<div className="shell"><button className="backbtn" onClick={()=>go("#/explore")}>← Go back</button><ErrorState onRetry={()=>setNonce(n=>n+1)}/></div>);
+  const c=st.col;
+  return (
+    <div className="shell">
+      <button className="backbtn" onClick={()=>go("#/explore")}>← Go back</button>
+      <h1 className="dtitle">{displayTitle(c)}</h1>
+      <div className="actions">
+        <button className={"btn btn-primary"+(saved?" on":"")} onClick={()=>setSaved(s=>!s)}>{saved?"Saved":"Save collection"}</button>
+        <button className={"btn btn-ghost"+(following?" on":"")} onClick={()=>setFollowing(s=>!s)}>{following?"Following":"Follow curator"}</button>
+        <button className="btn btn-ghost" onClick={()=>selectMany(c.items)}>Select all for prompt</button>
+      </div>
+      <div className="note">
+        <span className="lead">Curate, then conjure.</span>
+        <span className="body">Add the pieces that move you with <b>+</b>, then turn the set into a prompt. Every save stays credited to <a onClick={()=>go(linkCur(c.curatorId))}>@{c.curator}</a> — when their taste travels, they earn.</span>
+      </div>
+      <div className="dgrid">{c.items.map(it=><Tile key={it.id} it={it}/>)}</div>
+      {relRanked.length>0&&(<div>
+        <div className="label" style={{marginTop:48}}><div className="l">More like this</div>
+          <div className="r">{relRanked.some(r=>r.vscore!=null)?"ranked by visual similarity":"related collections"}</div></div>
+        <div className="dgrid" style={{marginTop:4}}>{relRanked.map(r=>(
+          <div key={r.id} className="card" onClick={()=>go(linkColl(r.id))}>
+            <div className="tile" style={{position:"relative"}}><Img src={r.cover} alt={r.title} style={{height:160}}/>
+              {r.vscore!=null&&<span className="chip" style={{position:"absolute",top:8,left:8}}>{Math.round(r.vscore*100)}% match</span>}</div>
+            <div className="title" style={{marginTop:8}}>{displayTitle(r)}</div>
+            <div className="sub">@{r.curator}</div></div>))}</div></div>)}
+    </div>
+  );
+}
+
+function CuratorProfile({handle}){
+  const [st,setSt]=useState({loading:true,error:false,curator:null,cols:[]});
+  const [following,setFollowing]=useState(false),[nonce,setNonce]=useState(0);
+  useEffect(()=>{let on=true;setSt({loading:true,error:false,curator:null,cols:[]});
+    getCurator(handle).then(r=>on&&setSt({loading:false,error:false,curator:r.curator,cols:r.collections}))
+      .catch(()=>on&&setSt({loading:false,error:true,curator:null,cols:[]}));
+    return()=>{on=false;};},[handle,nonce]);
+  if(st.loading) return(<div className="shell"><button className="backbtn" onClick={()=>go("#/explore")}>← Go back</button>
+    <div className="skel" style={{height:56,width:56,borderRadius:999,marginTop:20}}/><div className="skel" style={{height:96,marginTop:24,borderRadius:12}}/></div>);
+  if(st.error||!st.curator) return(<div className="shell"><button className="backbtn" onClick={()=>go("#/explore")}>← Go back</button><ErrorState onRetry={()=>setNonce(n=>n+1)}/></div>);
+  const cur=st.curator,cols=st.cols,totalEl=cols.reduce((s,c)=>s+(c.n||0),0);
+  return (
+    <div className="shell">
+      <button className="backbtn" onClick={()=>go("#/explore")}>← Go back</button>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:24,marginTop:20,flexWrap:"wrap"}}>
+        <div style={{maxWidth:460}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            {cur.avatar?<img className="avatar" src={cur.avatar} alt={cur.name}/>:<div className="avatar">{(cur.name||"?").charAt(0)}</div>}
+            <div><h1 className="wm" style={{fontSize:24,margin:0}}>{cur.name}</h1><div className="dsub">@{slug(cur.name)}</div></div>
+          </div>
+          {cur.bio&&<p style={{fontSize:14,lineHeight:1.6,marginTop:16}}>{cur.bio}</p>}
+        </div>
+        <button className={"btn btn-primary"+(following?" on":"")} onClick={()=>setFollowing(s=>!s)} style={{padding:"8px 20px"}}>{following?"Following":"Follow"}</button>
+      </div>
+      <div className="standing">
+        <div className="row"><span className="tiny" style={{textTransform:"uppercase",letterSpacing:".04em"}}>Curator standing</span></div>
+        <div className="stats">
+          {cur.followers!=null&&<div className="stat"><div className="v">{cur.followers.toLocaleString()}</div><div className="k">Followers</div></div>}
+          <div className="stat"><div className="v">{cols.length}</div><div className="k">Collections</div></div>
+          <div className="stat"><div className="v">{totalEl.toLocaleString()}</div><div className="k">Total elements</div></div>
+          <div className="stat"><div className="v">— (model)</div><div className="k">Earned</div></div>
+        </div>
+        <p className="tiny" style={{marginTop:16}}>Tier and earnings are part of Sourced's payout model, not yet present in this data.</p>
+      </div>
+      <div className="sec">Collections</div>
+      {cols.length===0?<p style={{fontSize:13,color:"var(--soft)",marginTop:12}}>No public collections found.</p>
+        :<div className="grid" style={{marginTop:16}}>{cols.map((c,i)=><Card key={c.id} c={c} i={i}/>)}</div>}
+    </div>
+  );
+}
+
+function PromptModal({items,onClose}){
+  const [out,setOut]=useState("");
+  const [busy,setBusy]=useState(true);
+  const [err,setErr]=useState("");
+  const [copied,setCopied]=useState(false);
+  const run=useCallback(async()=>{
+    setErr("");setBusy(true);setCopied(false);
+    const meta=await collectMeta(items);
+    const k=getKey();
+    try{
+      if(k){ const t=await generatePromptLLM(items,k,meta); setOut(t); }
+      else { setOut(draftPromptFromMetadata(items,meta)); }
+    }catch(e){ setErr(String(e.message||e)); setOut(draftPromptFromMetadata(items,meta)); }
+    setBusy(false);
+  },[items]);
+  useEffect(()=>{ run(); /* auto-generate on open */ },[]);
+  const copy=()=>{ if(navigator.clipboard){navigator.clipboard.writeText(out);setCopied(true);setTimeout(()=>setCopied(false),1500);} };
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3>Your prompt</h3>
+        <div className="msub">Edit anything above before copying.</div>
+        <div className="thumbs">{items.slice(0,12).map(it=><img key={it.id} src={it.src} alt=""/>)}</div>
+        {busy
+          ? <div className="loader" style={{padding:"30px 0"}}><span className="material-symbols-outlined loadericon">package_2</span></div>
+          : <div>
+              <textarea className="result" value={out} onChange={e=>setOut(e.target.value)} spellCheck={false}/>
+              {err&&<div className="tiny" style={{color:"var(--accentText)",marginTop:8}}>AI call failed ({err}). Showing a metadata draft.</div>}
+              <div className="mfoot">
+                <button className="btn btn-primary" onClick={copy}>{copied?"Copied ✓":"Copy prompt"}</button>
+                <button className="btn btn-ghost" onClick={run}>↻ Regenerate</button>
+              </div>
+            </div>}
+      </div>
+    </div>
+  );
+}
+
+function KeysModal({onClose}){
+  const [tb,setTb]=useState(keyGet("tumblr"));
+  const [un,setUn]=useState(keyGet("unsplash"));
+  const [px,setPx]=useState(keyGet("pexels"));
+  const [pb,setPb]=useState(keyGet("pixabay"));
+  const save=()=>{keySet("tumblr",tb.trim());keySet("unsplash",un.trim());keySet("pexels",px.trim());keySet("pixabay",pb.trim());window.location.reload();};
+  const field=(label,val,set,ph)=>(
+    <label className="tiny" style={{display:"block",marginBottom:10}}>{label}
+      <input type="password" value={val} onChange={e=>set(e.target.value)} placeholder={ph}
+        style={{display:"block",width:"100%",marginTop:4,border:"1px solid var(--lineS)",borderRadius:8,padding:"8px 12px",font:"inherit",fontSize:12.5}}/></label>);
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3>Connect image sources</h3>
+        <div className="msub">Optional. Keys are stored only in this browser and add more imagery to the feed.</div>
+        {field("Tumblr — API key (designer/artist curation)",tb,setTb,"OAuth consumer key")}
+        {field("Unsplash — Access Key",un,setUn,"Client-ID / Access Key")}
+        {field("Pexels — API Key",px,setPx,"API key")}
+        {field("Pixabay — API Key",pb,setPb,"API key")}
+        <div className="mfoot">
+          <button className="btn btn-primary" onClick={save}>Save & reload</button>
+          <span className="tiny">free keys at each provider's developer page</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const route=useRoute();
+  const [sel,setSel]=useState([]);
+  const [modal,setModal]=useState(false);
+  const [keysOpen,setKeysOpen]=useState(false);
+  const [searchOpen,setSearchOpen]=useState(false);
+  const has=useCallback(it=>sel.some(s=>s.src===it.src),[sel]);
+  const toggle=useCallback(it=>setSel(s=>s.some(x=>x.src===it.src)?s.filter(x=>x.src!==it.src):[...s,it]),[]);
+  const selectMany=useCallback(items=>setSel(s=>{const m=new Map(s.map(x=>[x.src,x]));items.forEach(it=>it.src&&m.set(it.src,it));return[...m.values()];}),[]);
+  const clear=useCallback(()=>setSel([]),[]);
+  const ctx={sel,has,toggle,selectMany,clear};
+  let page;
+  if(route.name==="collection") page=<CollectionDetail id={route.id}/>;
+  else if(route.name==="curator") page=<CuratorProfile handle={route.handle}/>;
+  else page=<Explore searchOpen={searchOpen} setSearchOpen={setSearchOpen} onSources={()=>setKeysOpen(true)}/>;
+  return (
+    <SelCtx.Provider value={ctx}>
+      <Header/>
+      {page}
+      <div className="shell"><div className="footer">
+        <span className="wm logo" style={{fontSize:20}}>Sourced</span>
+        <span className="r">the discovery engine that pays the people with taste</span></div></div>
+      {sel.length>0&&(<div className="selbar">
+        <span className="c">{sel.length} in collection</span>
+        <span className="x" onClick={clear}>clear</span>
+        <button className="go" onClick={()=>setModal(true)}>Generate prompt →</button>
+      </div>)}
+      {modal&&<PromptModal items={sel} onClose={()=>setModal(false)}/>}
+      {keysOpen&&<KeysModal onClose={()=>setKeysOpen(false)}/>}
+    </SelCtx.Provider>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+<script>
+/* Favicon: render the Material Symbols "package_2" glyph to a canvas. */
+(function(){
+  function setFav(){
+    try{
+      var c=document.createElement("canvas"); c.width=64; c.height=64;
+      var x=c.getContext("2d");
+      x.fillStyle="#1f1f1f";
+      x.font='52px "Material Symbols Outlined"';
+      x.textAlign="center"; x.textBaseline="middle";
+      x.fillText("package_2",32,34);
+      var href=c.toDataURL("image/png");
+      var l=document.querySelector("link[rel~='icon']")||document.createElement("link");
+      l.rel="icon"; l.type="image/png"; l.href=href; document.head.appendChild(l);
+    }catch(e){}
+  }
+  if(document.fonts&&document.fonts.load){
+    document.fonts.load('52px "Material Symbols Outlined"',"package_2").then(function(){setTimeout(setFav,150);},function(){setTimeout(setFav,800);});
+  } else { setTimeout(setFav,1200); }
+})();
+</script>
+</body>
+</html>
