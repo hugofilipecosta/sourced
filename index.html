@@ -23,7 +23,7 @@ a{color:inherit;text-decoration:none;cursor:pointer}
 .wm{font-family:'Lexend Deca',system-ui,sans-serif;font-style:normal;font-weight:800;letter-spacing:-0.01em}
 .logo{font-family:'BBH Bartle','Lexend Deca',sans-serif;font-weight:400;letter-spacing:0}
 .shell{max-width:1180px;margin:0 auto;padding-left:24px;padding-right:24px}
-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--line);background:rgba(250,250,248,.85);backdrop-filter:blur(8px)}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:16px 28px;border-bottom:1px solid var(--line);background:rgba(250,250,248,.85);backdrop-filter:blur(8px)}
 nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .chip-live{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft)}
 .dot{width:6px;height:6px;border-radius:999px;background:var(--amber)}
@@ -640,15 +640,29 @@ const DESCRIBE_BRIEF =
   "Return ONLY a JSON array (no prose, no markdown fences), one object per image, shaped like: "+
   '{"subject":"the concrete visual subject or scene, never a category word like \'graphic design\'","palette":["2-4 named colours actually present"],"texture":"the dominant surface or material quality","detail":"one specific, unexpected visual detail worth keeping"}. '+
   "If an image is abstract with no clear subject, describe the composition itself as the subject. Never invent artist names, titles, or text.";
+// Calls the model directly with a user-supplied key, or falls back to our
+// serverless proxy (/api/prompt, key held server-side) when no key is given —
+// so real vision-model prompt generation works by default, not just for
+// people who've pasted in their own Anthropic key.
+async function callModel(content, key, max_tokens, temperature){
+  const url = key ? "https://api.anthropic.com/v1/messages" : "/api/prompt";
+  const headers = {"content-type":"application/json"};
+  let body;
+  if(key){
+    headers["x-api-key"]=key; headers["anthropic-version"]="2023-06-01"; headers["anthropic-dangerous-direct-browser-access"]="true";
+    body={model:LLM_MODEL,max_tokens,temperature,messages:[{role:"user",content}]};
+  } else {
+    body={content,max_tokens,temperature};
+  }
+  const r=await fetch(url,{method:"POST",headers,body:JSON.stringify(body)});
+  let d={}; try{ d=await r.json(); }catch(e){}
+  if(!r.ok){ throw new Error((key?"Model ":"Proxy ")+r.status+(d.error?.message||d.error?": "+(d.error.message||d.error):"")); }
+  return (d.content||[]).map(b=>b.text||"").join("").trim();
+}
 async function describeImagesLLM(items, key){
   const content=[{type:"text",text:DESCRIBE_BRIEF}];
   for(const it of items.slice(0,8)){ if(it.src) content.push({type:"image",source:{type:"url",url:it.src}}); }
-  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
-    headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-    body:JSON.stringify({model:LLM_MODEL,max_tokens:700,temperature:0.6,messages:[{role:"user",content}]})});
-  if(!r.ok){let m="";try{m=(await r.json()).error?.message||"";}catch(e){} throw new Error("Model "+r.status+(m?": "+m:""));}
-  const d=await r.json();
-  const txt=(d.content||[]).map(b=>b.text||"").join("").trim().replace(/^```json\s*|```\s*$/g,"");
+  const txt=(await callModel(content,key,700,0.6)).replace(/^```json\s*|```\s*$/g,"");
   try{ const arr=JSON.parse(txt); return Array.isArray(arr)?arr:[]; }catch(e){ return []; }
 }
 function notesSummary(notes){
@@ -677,12 +691,7 @@ async function generatePromptLLM(items, key, meta){
     content.push({type:"text",text:PROMPT_BRIEF+(ms?("\n\nReference metadata from the images (use as factual grounding, but describe what you actually see): "+ms):"")});
     for(const it of items.slice(0,8)){ if(it.src) content.push({type:"image",source:{type:"url",url:it.src}}); }
   }
-  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
-    headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-    body:JSON.stringify({model:LLM_MODEL,max_tokens:600,temperature:1,messages:[{role:"user",content}]})});
-  if(!r.ok){let m="";try{m=(await r.json()).error?.message||"";}catch(e){} throw new Error("Model "+r.status+(m?": "+m:""));}
-  const d=await r.json();
-  const text=(d.content||[]).map(b=>b.text||"").join("").trim();
+  const text=await callModel(content,key,600,1);
   return {text, notes};
 }
 function draftPromptFromMetadata(items, meta){
@@ -1022,8 +1031,11 @@ function PromptModal({items,onClose}){
     const meta=await collectMeta(items);
     const k=getKey();
     try{
-      if(k){ const {text,notes:n}=await generatePromptLLM(items,k,meta); setOut(text); if(n&&n.length)setNotes(n); }
-      else { setOut(draftPromptFromMetadata(items,meta)); }
+      // Always attempt the real vision-model chain: a stored key calls Anthropic
+      // directly, otherwise callModel routes through our serverless proxy so
+      // everyone gets real image understanding, not just people with a key.
+      const {text,notes:n}=await generatePromptLLM(items,k,meta);
+      setOut(text); if(n&&n.length)setNotes(n);
     }catch(e){ setErr(String(e.message||e)); setOut(draftPromptFromMetadata(items,meta)); }
     setBusy(false);
   },[items]);
