@@ -634,15 +634,55 @@ function metaSummary(m){
   return p.join(" | ");
 }
 
+const DESCRIBE_BRIEF =
+  "You are an art director studying reference images one at a time, in order. For EACH image, extract exactly what you see — do not react to the set as a whole yet, just observe this one image. "+
+  "Return ONLY a JSON array (no prose, no markdown fences), one object per image, shaped like: "+
+  '{"subject":"the concrete visual subject or scene, never a category word like \'graphic design\'","palette":["2-4 named colours actually present"],"texture":"the dominant surface or material quality","detail":"one specific, unexpected visual detail worth keeping"}. '+
+  "If an image is abstract with no clear subject, describe the composition itself as the subject. Never invent artist names, titles, or text.";
+async function describeImagesLLM(items, key){
+  const content=[{type:"text",text:DESCRIBE_BRIEF}];
+  for(const it of items.slice(0,8)){ if(it.src) content.push({type:"image",source:{type:"url",url:it.src}}); }
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
+    headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:LLM_MODEL,max_tokens:700,temperature:0.6,messages:[{role:"user",content}]})});
+  if(!r.ok){let m="";try{m=(await r.json()).error?.message||"";}catch(e){} throw new Error("Model "+r.status+(m?": "+m:""));}
+  const d=await r.json();
+  const txt=(d.content||[]).map(b=>b.text||"").join("").trim().replace(/^```json\s*|```\s*$/g,"");
+  try{ const arr=JSON.parse(txt); return Array.isArray(arr)?arr:[]; }catch(e){ return []; }
+}
+function notesSummary(notes){
+  if(!notes||!notes.length) return "";
+  return notes.map((n,i)=>{
+    const parts=[];
+    if(n.subject) parts.push(n.subject);
+    if(n.palette&&n.palette.length) parts.push("palette: "+[].concat(n.palette).join(", "));
+    if(n.texture) parts.push("texture: "+n.texture);
+    if(n.detail) parts.push("detail: "+n.detail);
+    return `Image ${i+1} — `+parts.join("; ");
+  }).join("\n");
+}
 async function generatePromptLLM(items, key, meta){
   const ms=metaSummary(meta);
-  const content=[{type:"text",text:PROMPT_BRIEF+(ms?("\n\nReference metadata from the images (use as factual grounding, but describe what you actually see): "+ms):"")}];
-  for(const it of items.slice(0,8)){ if(it.src) content.push({type:"image",source:{type:"url",url:it.src}}); }
+  // Two-step chain: first observe each image individually, then synthesize from
+  // those notes (text-only) rather than asking the model to look-and-write at once.
+  // Falls back to the original one-shot (raw images + metadata) if the observe
+  // step errors or returns unparseable output, so quality never regresses.
+  const notes=await describeImagesLLM(items,key).catch(()=>[]);
+  const content=[];
+  if(notes.length){
+    const ns=notesSummary(notes);
+    content.push({type:"text",text:PROMPT_BRIEF+"\n\nPer-image notes from studying each reference individually:\n"+ns+(ms?("\n\nReference metadata (use as factual grounding): "+ms):"")});
+  } else {
+    content.push({type:"text",text:PROMPT_BRIEF+(ms?("\n\nReference metadata from the images (use as factual grounding, but describe what you actually see): "+ms):"")});
+    for(const it of items.slice(0,8)){ if(it.src) content.push({type:"image",source:{type:"url",url:it.src}}); }
+  }
   const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
     headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
     body:JSON.stringify({model:LLM_MODEL,max_tokens:600,temperature:1,messages:[{role:"user",content}]})});
   if(!r.ok){let m="";try{m=(await r.json()).error?.message||"";}catch(e){} throw new Error("Model "+r.status+(m?": "+m:""));}
-  const d=await r.json(); return (d.content||[]).map(b=>b.text||"").join("").trim();
+  const d=await r.json();
+  const text=(d.content||[]).map(b=>b.text||"").join("").trim();
+  return {text, notes};
 }
 function draftPromptFromMetadata(items, meta){
   meta = meta || {titles:[...new Set(items.map(i=>i.alt).filter(t=>t&&!isBadTitle(t)))].slice(0,4),
@@ -735,11 +775,7 @@ function Card({c,i}){
 function Header(){
   return (
     <header>
-      <a className="wm logo" style={{fontSize:22}} onClick={()=>go("#/explore")}>Sourced</a>
-      <nav>
-        <span style={{color:"var(--ink)",fontWeight:500,cursor:"default"}}>Log in</span>
-        <button className="btn-dark">Sign up</button>
-      </nav>
+      <a className="wm logo" style={{fontSize:22}} onClick={()=>go("#/explore")}>SSSSOURCED</a>
     </header>
   );
 }
@@ -965,17 +1001,27 @@ function CuratorProfile({handle}){
   );
 }
 
+function noteLine(n){
+  if(!n) return "";
+  const parts=[];
+  if(n.subject) parts.push(n.subject);
+  if(n.palette&&n.palette.length) parts.push([].concat(n.palette).join(", "));
+  if(n.texture) parts.push(n.texture);
+  if(n.detail) parts.push(n.detail);
+  return parts.join(" — ");
+}
 function PromptModal({items,onClose}){
   const [out,setOut]=useState("");
   const [busy,setBusy]=useState(true);
   const [err,setErr]=useState("");
   const [copied,setCopied]=useState(false);
+  const [notes,setNotes]=useState(null);
   const run=useCallback(async()=>{
-    setErr("");setBusy(true);setCopied(false);
+    setErr("");setBusy(true);setCopied(false);setNotes(null);
     const meta=await collectMeta(items);
     const k=getKey();
     try{
-      if(k){ const t=await generatePromptLLM(items,k,meta); setOut(t); }
+      if(k){ const {text,notes:n}=await generatePromptLLM(items,k,meta); setOut(text); if(n&&n.length)setNotes(n); }
       else { setOut(draftPromptFromMetadata(items,meta)); }
     }catch(e){ setErr(String(e.message||e)); setOut(draftPromptFromMetadata(items,meta)); }
     setBusy(false);
@@ -986,8 +1032,9 @@ function PromptModal({items,onClose}){
     <div className="overlay" onClick={onClose}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
         <h3>Your prompt</h3>
-        <div className="msub">Edit anything above before copying.</div>
-        <div className="thumbs">{items.slice(0,12).map(it=><img key={it.id} src={it.src} alt=""/>)}</div>
+        <div className="msub">Edit anything above before copying.{notes&&" Hover an image to see what it contributed."}</div>
+        <div className="thumbs">{items.slice(0,12).map((it,i)=>
+          <img key={it.id} src={it.src} alt="" title={notes&&notes[i]?noteLine(notes[i]):undefined}/>)}</div>
         {busy
           ? <div className="loader" style={{padding:"30px 0"}}><span className="material-symbols-outlined loadericon">package_2</span></div>
           : <div>
@@ -1051,8 +1098,7 @@ function App(){
       <Header/>
       {page}
       <div className="shell"><div className="footer">
-        <span className="wm logo" style={{fontSize:20}}>Sourced</span>
-        <span className="r">the discovery engine that pays the people with taste</span></div></div>
+        <span className="wm logo" style={{fontSize:20}}>SSSSOURCED</span></div></div>
       {sel.length>0&&(<div className="selbar">
         <span className="c">{sel.length} in collection</span>
         <span className="x" onClick={clear}>clear</span>
