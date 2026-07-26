@@ -24,7 +24,9 @@ a{color:inherit;text-decoration:none;cursor:pointer}
 .logo{font-family:'BBH Bartle','Lexend Deca',sans-serif;font-weight:400;letter-spacing:0}
 .shell{max-width:1180px;margin:0 auto;padding-left:24px;padding-right:24px}
 header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--line);background:rgba(250,250,248,.85);backdrop-filter:blur(8px)}
-.headline{font-size:13px;color:var(--soft)}
+.headline{font-size:13px;color:var(--soft);white-space:nowrap}
+@media(max-width:700px){.headline{display:none}}
+@media(max-width:400px){.logo{font-size:17px!important}}
 nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .chip-live{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft)}
 .dot{width:6px;height:6px;border-radius:999px;background:var(--amber)}
