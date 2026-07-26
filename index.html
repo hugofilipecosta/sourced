@@ -34,7 +34,7 @@ nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .hero{text-align:center;padding:52px 24px 24px}
 .hero h1{font-family:'Lexend Deca',sans-serif;font-weight:600;font-size:36px;letter-spacing:-.01em;margin:0 0 10px}
 .hero p{font-size:13px;color:var(--soft);margin:0 0 22px}
-.search{max-width:480px;margin:0 auto;display:flex;align-items:center;gap:10px;border:1px solid var(--lineS);border-radius:999px;padding:11px 18px;background:var(--raised)}
+.search{max-width:600px;height:60px;margin:0 auto;display:flex;align-items:center;gap:10px;border:1px solid var(--lineS);border-radius:999px;padding:0 24px;background:var(--raised)}
 .search input{flex:1;border:none;background:transparent;font:inherit;font-size:14px;color:var(--ink);outline:none}
 .colorrow{max-width:480px;margin:12px auto 0;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
 .swatch{width:32px;height:32px;border-radius:8px;border:1px solid var(--lineS);padding:0;cursor:pointer;background:none}
@@ -805,7 +805,6 @@ function Explore({searchOpen,setSearchOpen,onSources}){
   const [input,setInput]=useState(""),[query,setQuery]=useState(""),[cat,setCat]=useState("Featured");
   const [nonce,setNonce]=useState(0);
   const featuredQ=useMemo(()=>pick(FEATURED_SEEDS),[]);
-  const heroQuote=useMemo(()=>pick(DESIGN_QUOTES),[]);
   const [catsShown,setCatsShown]=useState(["Featured","Brutalist","Bauhaus","Swiss","Risograph","Collage","Y2K","Maximal","Monochrome","Surreal"]);
   const triedRef=useRef(new Set());
   const [advColor,setAdvColor]=useState(""),[hexIn,setHexIn]=useState("");
@@ -870,7 +869,6 @@ function Explore({searchOpen,setSearchOpen,onSources}){
   return (
     <div>
       <div className="hero">
-        <p>“{heroQuote.t}” — {heroQuote.a}</p>
         <div className="search">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{flexShrink:0,opacity:.4}}>
             <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
@@ -1100,6 +1098,7 @@ function App(){
   const [modal,setModal]=useState(false);
   const [keysOpen,setKeysOpen]=useState(false);
   const [searchOpen,setSearchOpen]=useState(false);
+  const footerQuote=useMemo(()=>pick(DESIGN_QUOTES),[]);
   const has=useCallback(it=>sel.some(s=>s.src===it.src),[sel]);
   const toggle=useCallback(it=>setSel(s=>s.some(x=>x.src===it.src)?s.filter(x=>x.src!==it.src):[...s,it]),[]);
   const selectMany=useCallback(items=>setSel(s=>{const m=new Map(s.map(x=>[x.src,x]));items.forEach(it=>it.src&&m.set(it.src,it));return[...m.values()];}),[]);
@@ -1114,7 +1113,8 @@ function App(){
       <Header/>
       {page}
       <div className="shell"><div className="footer">
-        <span className="wm logo" style={{fontSize:20}}>SSSSOURCED</span></div></div>
+        <span className="wm logo" style={{fontSize:20}}>SSSSOURCED</span>
+        <span className="r">“{footerQuote.t}” — {footerQuote.a}</span></div></div>
       {sel.length>0&&(<div className="selbar">
         <span className="c">{sel.length} in collection</span>
         <span className="x" onClick={clear}>clear</span>
