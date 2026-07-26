@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' fill='white' stroke='black' stroke-width='4'/%3E%3C/svg%3E" />
 <title>Sourced — Visual inspiration & mood boards for designers</title>
 <meta name="description" content="Sourced is a curation engine for designers and AI-curation professionals. Discover design and art inspiration from open collections, build mood boards, and turn them into ready-to-use image-generation prompts. Where taste gets credit." />
 <meta name="keywords" content="design inspiration, mood board, visual discovery, curation, art reference, graphic design, typography, brutalist, risograph, AI prompt generator, image generation prompt, color search, designers, creative reference" />
@@ -1110,27 +1111,6 @@ function App(){
   );
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
-</script>
-<script>
-/* Favicon: render the Material Symbols "package_2" glyph to a canvas. */
-(function(){
-  function setFav(){
-    try{
-      var c=document.createElement("canvas"); c.width=64; c.height=64;
-      var x=c.getContext("2d");
-      x.fillStyle="#1f1f1f";
-      x.font='52px "Material Symbols Outlined"';
-      x.textAlign="center"; x.textBaseline="middle";
-      x.fillText("package_2",32,34);
-      var href=c.toDataURL("image/png");
-      var l=document.querySelector("link[rel~='icon']")||document.createElement("link");
-      l.rel="icon"; l.type="image/png"; l.href=href; document.head.appendChild(l);
-    }catch(e){}
-  }
-  if(document.fonts&&document.fonts.load){
-    document.fonts.load('52px "Material Symbols Outlined"',"package_2").then(function(){setTimeout(setFav,150);},function(){setTimeout(setFav,800);});
-  } else { setTimeout(setFav,1200); }
-})();
 </script>
 </body>
 </html>
