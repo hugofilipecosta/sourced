@@ -463,12 +463,19 @@ const PROV_ORDER = ["ch","tb","ai","va","me","un","px","pb"];
 // Everything else is fetched via FEATURED_SEEDS / search (see topics.md).
 // Curatorial lenses, not medium buckets: movements / techniques / moods that
 // designers actually browse by, and that the curator sources surface well.
-// Full pool of lenses. Featured is pinned; 9 of the rest are shown at random per load.
+// Full pool of lenses (40 total incl. Featured). Featured is pinned; 9 of the
+// rest are shown at random per load (see catsShown init in Explore).
 const CAT_Q = {Featured:"design",Brutalist:"brutalist",Bauhaus:"bauhaus",Swiss:"swiss design",
   Risograph:"risograph",Collage:"collage",Y2K:"y2k",Maximal:"maximalism",Monochrome:"monochrome",
   Surreal:"surrealism",Vaporwave:"vaporwave",Acid:"acid graphics",Psychedelic:"psychedelic",
   Memphis:"memphis design",Constructivist:"constructivism",Deco:"art deco",Minimal:"minimalism",
-  "Mid-century":"mid century modern"};
+  "Mid-century":"mid century modern",Grunge:"grunge design",Punk:"punk zine","Pop Art":"pop art",
+  "Op Art":"op art",Futurism:"futurism","De Stijl":"de stijl",Cyberpunk:"cyberpunk",
+  Solarpunk:"solarpunk",Retrofuturism:"retrofuturism","Pixel Art":"pixel art",Glitch:"glitch art",
+  Letterpress:"letterpress","Screen Print":"screen print",Woodcut:"woodcut print",
+  Blackletter:"blackletter typography",Packaging:"packaging design","Type Specimen":"type specimen",
+  Signage:"wayfinding signage","Data Viz":"data visualization",Generative:"generative art",
+  Textile:"textile pattern",Scandi:"scandinavian design"};
 const CATS = Object.keys(CAT_Q);
 
 // Rotating hero word.
@@ -500,8 +507,10 @@ const VIBRANT = ["#FF5A1F","#FF2D78","#8B5CF6","#2563EB","#06B6D4","#10B981",
   "#F43F5E","#F59E0B","#0EA5E9","#D946EF","#EF4444","#22C55E"];
 const pick = a => a[Math.floor(Math.random()*a.length)];
 const shuffle = a => a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
-// Different page of results each page load -> always fresh content.
-const SESSION_PAGE = 1 + Math.floor(Math.random()*3);
+// Always start from page 1 so the first results anyone sees are each
+// provider's best/most-relevant page, not a random one. Infinite scroll
+// (loadMore) still pages forward from here for freshness as you browse.
+const SESSION_PAGE = 1;
 // Year window. Home/featured is always 1920s and newer; advanced search can
 // narrow it to a single decade by setting YEAR_FROM/YEAR_TO.
 const HOME_FLOOR = 1920;
@@ -808,8 +817,12 @@ function ErrorState({onRetry}){
 function Explore({searchOpen,setSearchOpen,onSources}){
   const [input,setInput]=useState(""),[query,setQuery]=useState(""),[cat,setCat]=useState("Featured");
   const [nonce,setNonce]=useState(0);
-  const featuredQ=useMemo(()=>pick(FEATURED_SEEDS),[]);
-  const [catsShown,setCatsShown]=useState(["Featured","Brutalist","Bauhaus","Swiss","Risograph","Collage","Y2K","Maximal","Monochrome","Surreal"]);
+  // Fixed, proven-safe default for the Featured tab (was a random pick across
+  // 19 seeds, which made the very first thing a visitor sees unpredictable —
+  // some seeds skew far from "design"). FEATURED_SEEDS[0] is "design", the
+  // same term already used as the ultimate fallback below.
+  const featuredQ=FEATURED_SEEDS[0];
+  const [catsShown,setCatsShown]=useState(()=>["Featured",...shuffle(CATS.filter(c=>c!=="Featured")).slice(0,9)]);
   const triedRef=useRef(new Set());
   const [advColor,setAdvColor]=useState(""),[hexIn,setHexIn]=useState("");
   const [eraIdx,setEraIdx]=useState(-1); // -1 = Any (home floor)
@@ -929,7 +942,7 @@ function Tile({it}){
 function CollectionDetail({id}){
   const [st,setSt]=useState({loading:true,error:false,col:null,related:[]});
   const [relRanked,setRelRanked]=useState([]);
-  const [saved,setSaved]=useState(false),[following,setFollowing]=useState(false),[nonce,setNonce]=useState(0);
+  const [saved,setSaved]=useState(false),[nonce,setNonce]=useState(0);
   const {selectMany}=useSel();
   useEffect(()=>{let on=true;setSt({loading:true,error:false,col:null,related:[]});setRelRanked([]);
     getCollection(id).then(r=>on&&setSt({loading:false,error:false,col:r.collection,related:r.related}))
@@ -954,7 +967,6 @@ function CollectionDetail({id}){
       <h1 className="dtitle">{displayTitle(c)}</h1>
       <div className="actions">
         <button className={"btn btn-primary"+(saved?" on":"")} onClick={()=>setSaved(s=>!s)}>{saved?"Saved":"Save collection"}</button>
-        <button className={"btn btn-ghost"+(following?" on":"")} onClick={()=>setFollowing(s=>!s)}>{following?"Following":"Follow curator"}</button>
         <button className="btn btn-ghost" onClick={()=>selectMany(c.items)}>Select all for prompt</button>
       </div>
       <div className="note">
