@@ -1028,11 +1028,11 @@ function noteLine(n){
 function PromptModal({items,onClose}){
   const [out,setOut]=useState("");
   const [busy,setBusy]=useState(true);
-  const [err,setErr]=useState("");
+  const [err,setErr]=useState(false);
   const [copied,setCopied]=useState(false);
   const [notes,setNotes]=useState(null);
   const run=useCallback(async()=>{
-    setErr("");setBusy(true);setCopied(false);setNotes(null);
+    setErr(false);setBusy(true);setCopied(false);setNotes(null);
     const meta=await collectMeta(items);
     const k=getKey();
     try{
@@ -1041,7 +1041,7 @@ function PromptModal({items,onClose}){
       // everyone gets real image understanding, not just people with a key.
       const {text,notes:n}=await generatePromptLLM(items,k,meta);
       setOut(text); if(n&&n.length)setNotes(n);
-    }catch(e){ setErr(String(e.message||e)); setOut(draftPromptFromMetadata(items,meta)); }
+    }catch(e){ console.error("Prompt generation fell back to metadata draft:",e); setErr(true); setOut(draftPromptFromMetadata(items,meta)); }
     setBusy(false);
   },[items]);
   useEffect(()=>{ run(); /* auto-generate on open */ },[]);
@@ -1057,7 +1057,7 @@ function PromptModal({items,onClose}){
           ? <div className="loader" style={{padding:"30px 0"}}><span className="material-symbols-outlined loadericon">package_2</span></div>
           : <div>
               <textarea className="result" value={out} onChange={e=>setOut(e.target.value)} spellCheck={false}/>
-              {err&&<div className="tiny" style={{color:"var(--accentText)",marginTop:8}}>AI call failed ({err}). Showing a metadata draft.</div>}
+              {err&&<div className="tiny" style={{color:"var(--soft)",marginTop:8}}>Quick draft — full AI analysis wasn't available this time.</div>}
               <div className="mfoot">
                 <button className="btn btn-primary" onClick={copy}>{copied?"Copied ✓":"Copy prompt"}</button>
                 <button className="btn btn-ghost" onClick={run}>↻ Regenerate</button>
