@@ -24,7 +24,7 @@ a{color:inherit;text-decoration:none;cursor:pointer}
 .logo{font-family:'BBH Bartle','Lexend Deca',sans-serif;font-weight:400;letter-spacing:0}
 .shell{max-width:1180px;margin:0 auto;padding-left:24px;padding-right:24px}
 header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--line);background:rgba(250,250,248,.85);backdrop-filter:blur(8px)}
-.tagline{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--accentText);margin:0 0 16px}
+.tagline{font-family:'Lexend Deca',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin:0 0 16px}
 @media(max-width:700px){
   header{padding:16px}
   header a.logo{font-size:16px!important}
@@ -806,7 +806,9 @@ function Header(){
   return (
     <header>
       <a className="wm logo" style={{fontSize:22}} onClick={()=>go("#/explore")}>SSSSOURCED</a>
-      <button className="btn-dark" onClick={()=>window.location.reload()}>Reload</button>
+      <button className="btn-dark" style={{background:"var(--amber)",color:"var(--ink)",display:"inline-flex",alignItems:"center",gap:6}} onClick={()=>window.location.reload()}>
+        <span className="material-symbols-outlined" style={{fontSize:16}}>refresh</span>Reload
+      </button>
     </header>
   );
 }
