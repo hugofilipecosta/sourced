@@ -803,7 +803,10 @@ function Header(){
   return (
     <header>
       <a className="wm logo" style={{fontSize:22}} onClick={()=>go("#/explore")}>SSSSOURCED</a>
-      <span className="headline">Source. Curate. Generate.</span>
+      <div style={{display:"flex",alignItems:"center",gap:16}}>
+        <span className="headline">Source. Curate. Generate.</span>
+        <button className="btn-dark" onClick={()=>window.location.reload()}>Reload</button>
+      </div>
     </header>
   );
 }
@@ -897,7 +900,6 @@ function Explore({searchOpen,setSearchOpen,onSources}){
             {catsShown.map(c=>(
               <button key={c} className={"pill"+(c===cat?" active":"")} onClick={()=>{setCat(c);setInput("");setQuery("");}}>{c}</button>))}
           </div>
-          <button className="tunebtn" title="Filter by era" onClick={()=>setSearchOpen(true)}><span className="material-symbols-outlined">discover_tune</span></button>
         </div>
       </div>
       <div className="feed">
