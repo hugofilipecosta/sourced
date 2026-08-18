@@ -27,7 +27,7 @@ header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-c
 .tagline{font-family:'Lexend Deca',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
 @media(max-width:700px){
   header a.logo{font-size:23px!important}
-  header .tagline{display:none}
+  header .r{display:none}
 }
 nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .chip-live{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft)}
@@ -224,6 +224,46 @@ function analyzeImage(url){
     img.src=url;
   });
   _analysis.set(url,p);return p;
+}
+// Loads an image for canvas use, same CORS-safe pattern as analyzeImage:
+// resolve(null) rather than throw on any failure (blocked CORS, bad URL, etc.)
+// so a strip export can just skip sources that won't let the canvas read them.
+function loadImageEl(url){
+  return new Promise(resolve=>{
+    const img=new Image(); img.crossOrigin="anonymous";
+    img.onload=()=>resolve(img);
+    img.onerror=()=>resolve(null);
+    img.src=url;
+  });
+}
+// Composites the selected images into one horizontal strip (square tiles,
+// object-fit: cover — matching how they appear in the prompt modal's thumb
+// row) and returns a PNG blob, or null if none of them could be loaded.
+async function buildImageStripBlob(items){
+  const TILE=220, GAP=10, RADIUS=14;
+  const loaded=(await Promise.all(items.slice(0,12).map(it=>loadImageEl(it.src)))).filter(Boolean);
+  if(!loaded.length) return null;
+  const cv=document.createElement("canvas");
+  cv.width=loaded.length*TILE+(loaded.length-1)*GAP;
+  cv.height=TILE;
+  const ctx=cv.getContext("2d");
+  ctx.fillStyle="#FAFAF8"; ctx.fillRect(0,0,cv.width,cv.height);
+  loaded.forEach((img,i)=>{
+    const x=i*(TILE+GAP);
+    const s=Math.max(TILE/img.width, TILE/img.height);
+    const w=img.width*s, h=img.height*s;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x+RADIUS,0);
+    ctx.arcTo(x+TILE,0,x+TILE,TILE,RADIUS);
+    ctx.arcTo(x+TILE,TILE,x,TILE,RADIUS);
+    ctx.arcTo(x,TILE,x,0,RADIUS);
+    ctx.arcTo(x,0,x+TILE,0,RADIUS);
+    ctx.closePath(); ctx.clip();
+    ctx.drawImage(img, x-(w-TILE)/2, -(h-TILE)/2, w, h);
+    ctx.restore();
+  });
+  return new Promise(resolve=>{ try{ cv.toBlob(b=>resolve(b),"image/png"); }catch(e){ resolve(null); } });
 }
 const _cache = new Map();
 async function getJSON(url, headers){
@@ -805,10 +845,11 @@ function Card({c,i}){
 }
 
 function Header(){
+  const quote=useMemo(()=>pick(DESIGN_QUOTES),[]);
   return (
     <header>
       <a className="wm logo" style={{fontSize:22}} onClick={()=>go("#/explore")}>SSSSOURCED</a>
-      <div className="tagline">Source. Curate. Generate.</div>
+      <span className="r">“{quote.t}” — {quote.a}</span>
     </header>
   );
 }
@@ -820,8 +861,7 @@ function ErrorState({onRetry}){
     <button className="retry" onClick={onRetry}>Retry</button></div>);
 }
 
-function Explore({searchOpen,setSearchOpen,onSources}){
-  const [input,setInput]=useState(""),[query,setQuery]=useState(""),[cat,setCat]=useState("Featured");
+function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQuery,cat,setCat}){
   const [nonce,setNonce]=useState(0);
   // Date-seeded, not random: the Featured tab rotates through the curated
   // FEATURED_SEEDS pool once per calendar day (UTC). Same term for everyone
@@ -950,7 +990,7 @@ function Tile({it}){
 function CollectionDetail({id}){
   const [st,setSt]=useState({loading:true,error:false,col:null,related:[]});
   const [relRanked,setRelRanked]=useState([]);
-  const [saved,setSaved]=useState(false),[nonce,setNonce]=useState(0);
+  const [nonce,setNonce]=useState(0);
   const {selectMany}=useSel();
   useEffect(()=>{let on=true;setSt({loading:true,error:false,col:null,related:[]});setRelRanked([]);
     getCollection(id).then(r=>on&&setSt({loading:false,error:false,col:r.collection,related:r.related}))
@@ -974,7 +1014,6 @@ function CollectionDetail({id}){
       <button className="backbtn" onClick={()=>go("#/explore")}>← Go back</button>
       <h1 className="dtitle">{displayTitle(c)}</h1>
       <div className="actions">
-        <button className={"btn btn-primary"+(saved?" on":"")} onClick={()=>setSaved(s=>!s)}>{saved?"Saved":"Save collection"}</button>
         <button className="btn btn-ghost" onClick={()=>selectMany(c.items)}>Select all for prompt</button>
       </div>
       <div className="note">
@@ -1051,6 +1090,7 @@ function PromptModal({items,onClose}){
   const [err,setErr]=useState(false);
   const [copied,setCopied]=useState(false);
   const [notes,setNotes]=useState(null);
+  const [imgCopyState,setImgCopyState]=useState("idle"); // idle | copied | error
   const run=useCallback(async()=>{
     setErr(false);setBusy(true);setCopied(false);setNotes(null);
     const meta=await collectMeta(items);
@@ -1066,6 +1106,16 @@ function PromptModal({items,onClose}){
   },[items]);
   useEffect(()=>{ run(); /* auto-generate on open */ },[]);
   const copy=()=>{ if(navigator.clipboard){navigator.clipboard.writeText(out);setCopied(true);setTimeout(()=>setCopied(false),1500);} };
+  const copyImages=()=>{
+    if(!navigator.clipboard||!window.ClipboardItem){ setImgCopyState("error"); setTimeout(()=>setImgCopyState("idle"),2000); return; }
+    // navigator.clipboard.write must be called synchronously within the click
+    // handler for Safari to honor it; the blob itself can resolve async since
+    // ClipboardItem accepts a pending Promise<Blob>.
+    const blobPromise=buildImageStripBlob(items).then(b=>{ if(!b) throw new Error("no images could be loaded for the strip"); return b; });
+    navigator.clipboard.write([new ClipboardItem({"image/png":blobPromise})])
+      .then(()=>{ setImgCopyState("copied"); setTimeout(()=>setImgCopyState("idle"),1500); })
+      .catch(e=>{ console.error("Copy image strip failed:",e); setImgCopyState("error"); setTimeout(()=>setImgCopyState("idle"),2000); });
+  };
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
@@ -1080,6 +1130,7 @@ function PromptModal({items,onClose}){
               {err&&<div className="tiny" style={{color:"var(--soft)",marginTop:8}}>Quick draft — full AI analysis wasn't available this time.</div>}
               <div className="mfoot">
                 <button className="btn btn-primary" onClick={copy}>{copied?"Copied ✓":"Copy prompt"}</button>
+                <button className="btn btn-ghost" onClick={copyImages}>{imgCopyState==="copied"?"Copied ✓":imgCopyState==="error"?"Couldn't copy":"Copy images"}</button>
                 <button className="btn btn-ghost" onClick={run}>↻ Regenerate</button>
               </div>
             </div>}
@@ -1122,7 +1173,10 @@ function App(){
   const [modal,setModal]=useState(false);
   const [keysOpen,setKeysOpen]=useState(false);
   const [searchOpen,setSearchOpen]=useState(false);
-  const footerQuote=useMemo(()=>pick(DESIGN_QUOTES),[]);
+  // Lifted out of Explore so it survives navigating into a collection/curator
+  // and back — Explore fully unmounts on route change (different component
+  // type), which would otherwise reset the search box and active filter.
+  const [input,setInput]=useState(""),[query,setQuery]=useState(""),[cat,setCat]=useState("Featured");
   const has=useCallback(it=>sel.some(s=>s.src===it.src),[sel]);
   const toggle=useCallback(it=>setSel(s=>s.some(x=>x.src===it.src)?s.filter(x=>x.src!==it.src):[...s,it]),[]);
   const selectMany=useCallback(items=>setSel(s=>{const m=new Map(s.map(x=>[x.src,x]));items.forEach(it=>it.src&&m.set(it.src,it));return[...m.values()];}),[]);
@@ -1131,14 +1185,15 @@ function App(){
   let page;
   if(route.name==="collection") page=<CollectionDetail id={route.id}/>;
   else if(route.name==="curator") page=<CuratorProfile handle={route.handle}/>;
-  else page=<Explore searchOpen={searchOpen} setSearchOpen={setSearchOpen} onSources={()=>setKeysOpen(true)}/>;
+  else page=<Explore searchOpen={searchOpen} setSearchOpen={setSearchOpen} onSources={()=>setKeysOpen(true)}
+    input={input} setInput={setInput} query={query} setQuery={setQuery} cat={cat} setCat={setCat}/>;
   return (
     <SelCtx.Provider value={ctx}>
       <Header/>
       {page}
       <div className="shell"><div className="footer">
         <span className="wm logo" style={{fontSize:20}}>SSSSOURCED</span>
-        <span className="r">“{footerQuote.t}” — {footerQuote.a}</span></div></div>
+        <div className="tagline">Source. Curate. Generate.</div></div></div>
       {sel.length>0&&(<div className="selbar">
         <span className="c">{sel.length} in collection</span>
         <span className="x" onClick={clear}>clear</span>
