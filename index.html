@@ -602,7 +602,9 @@ async function listCollections(query, limit=24, page=SESSION_PAGE, rankText){
   const lists = results.map(r=>r.status==="fulfilled"?r.value:[]);
   const merged=[]; let i=0; let added=true;
   while(added){added=false; for(const l of lists){ if(l[i]){merged.push(l[i]); added=true;} } i++;}
-  if(merged.length===0) throw new Error("all sources empty");
+  // No matches is a normal outcome for a niche query, not a failure — return
+  // [] rather than throw, so the UI shows the friendly "nothing here yet"
+  // empty state instead of the scary connection-error screen.
   if(rankText){ // real query: keep on-topic results, rank by relevance + source quality
     const terms=expandTerms(rankText);
     const scored=merged.map(c=>({c,s:relevance(c,terms)}));
@@ -820,7 +822,11 @@ function displayTitle(c){
 
 function Img({src,alt,className,style}){
   const [err,setErr]=useState(false);
-  if(err||!src) return <div className={className} style={{...style,background:"var(--ambersoft)"}} aria-label={alt}/>;
+  if(err||!src) return (
+    <div className={className} style={{...style,background:"var(--ambersoft)",display:"grid",placeItems:"center"}} aria-label={alt}>
+      <span className="material-symbols-outlined" style={{fontSize:28,color:"var(--accentText)",opacity:.5}}>image_not_supported</span>
+    </div>
+  );
   return <img src={src} alt={alt} className={className} style={style} loading="lazy" decoding="async" onError={()=>setErr(true)}/>;
 }
 const SPAN_H=[320,220,208,220,320,208,220,320,208,320,220,208];
@@ -882,15 +888,30 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
     const rest=CATS.filter(c=>c!=="Featured");
     const day=Math.floor(Date.now()/86400000);
     const off=day%rest.length;
-    const candidates=[...rest.slice(off),...rest.slice(0,off)].slice(0,16);
+    // 10, not the full pool: each candidate fans out to all 8 providers, so
+    // checking everything would mean 300+ requests competing with the main
+    // feed fetch on every load. 10/day still cycles the full 39-lens pool
+    // roughly every 4 days.
+    const candidates=[...rest.slice(off),...rest.slice(0,off)].slice(0,10);
     // limit must be well above 20 here: listCollections derives its per-provider
     // fetch size from limit, so asking for only ~21 silently caps supply and
     // makes genuinely rich lenses (e.g. Bauhaus, Minimalism) look thin.
     Promise.allSettled(candidates.map(c=>listCollections(CAT_Q[c],150,1,CAT_Q[c]).then(items=>({c,n:items.length}))))
       .then(results=>{
         if(!on) return;
-        const rich=results.filter(r=>r.status==="fulfilled"&&r.value.n>20).map(r=>r.value.c);
-        if(rich.length) setCatsShown(["Featured",...shuffle(rich).slice(0,9)]);
+        // Prefer lenses that clear the >20 bar, but never leave the row
+        // looking sparse: pad with the next-richest checked candidates
+        // (sorted by actual count) rather than stopping short of 9.
+        const scored=results.filter(r=>r.status==="fulfilled").map(r=>r.value).filter(x=>x.n>0);
+        scored.sort((a,b)=>b.n-a.n);
+        const rich=scored.filter(x=>x.n>20).map(x=>x.c);
+        // Pad with genuinely-thin-but-real candidates only (>=8) — anything
+        // lower is too close to zero and likely to read as empty by the
+        // time the user actually clicks it (validation and click happen
+        // against slightly different sample windows).
+        const thin=scored.filter(x=>x.n<=20&&x.n>=8).map(x=>x.c);
+        const chosen=rich.length>=9 ? shuffle(rich).slice(0,9) : [...shuffle(rich),...thin].slice(0,9);
+        if(chosen.length) setCatsShown(["Featured",...chosen]);
       });
     return ()=>{on=false;};
   },[]);
@@ -927,17 +948,19 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
     setStatus("loading"); setItems([]); setEnd(false); pageRef.current=SESSION_PAGE;
     const run = color ? colorSearchCollections(color,colorText,24) : listCollections(textQ,24,SESSION_PAGE,rankQ);
     run.then(cols=>{ if(rid!==reqRef.current)return; setItems(cols); setStatus("idle"); if(color) setEnd(true);
-      // Guarantee both the Featured feed and category pills carry real
-      // content: swap a thin query for a fresh one from the same pool.
-      // >20 results is the bar — a handful of items reads as broken or
-      // repetitive, not curated (pill pre-validation already aims for this,
-      // but this is the safety net for whatever slips through, including
-      // the Featured tab's own day-seeded term).
-      if(!color && !query.trim() && cols.length<=20 && !triedRef.current.has(cat)){
-        triedRef.current.add(cat);
+      // Featured's day-seeded term isn't pre-validated (unlike pills, see
+      // below), so it keeps its own >20 safety net: swap once to "design"
+      // (the proven-strong fallback) if the day's pick comes up thin.
+      // Pills use a much lower bar here (near-empty only) because they're
+      // already pre-validated with a realistic sample size at mount time;
+      // reusing the same >20 bar against this fetch's smaller sample caused
+      // false-positive swaps (a pill validated as rich could still read
+      // "thin" here) that chained into a visible flicker/cascade.
+      if(!color && !query.trim() && !triedRef.current.has(cat)){
         if(cat==="Featured"){
-          if(featuredQ!==FEATURED_SEEDS[0]) setFeaturedQ(FEATURED_SEEDS[0]); // "design" — the proven-strong fallback
-        } else {
+          if(cols.length<=20){ triedRef.current.add(cat); if(featuredQ!==FEATURED_SEEDS[0]) setFeaturedQ(FEATURED_SEEDS[0]); }
+        } else if(cols.length<3){
+          triedRef.current.add(cat);
           const used=new Set(catsShown);
           const backup=Object.keys(CAT_Q).find(k=>k!=="Featured"&&!used.has(k)&&!triedRef.current.has(k));
           if(backup){ setCatsShown(prev=>prev.map(c=>c===cat?backup:c)); setCat(backup); }
