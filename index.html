@@ -868,9 +868,32 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
   // all day (consistent, curated first impression) but a different term
   // tomorrow (stays fresh — a pure random pick per load was unpredictable
   // within a session, while a single fixed term went stale after day one).
-  const featuredQ=useMemo(()=>{ const day=Math.floor(Date.now()/86400000); return FEATURED_SEEDS[day%FEATURED_SEEDS.length]; },[]);
+  const [featuredQ,setFeaturedQ]=useState(()=>{ const day=Math.floor(Date.now()/86400000); return FEATURED_SEEDS[day%FEATURED_SEEDS.length]; });
   const [catsShown,setCatsShown]=useState(()=>["Featured",...shuffle(CATS.filter(c=>c!=="Featured")).slice(0,9)]);
   const triedRef=useRef(new Set());
+  // Filters must actually have content: validate a day-rotated slice of the
+  // 40-lens pool against real result counts (>20) before showing them as
+  // pills, replacing the initial guess above once validation resolves.
+  // Rotating which slice gets checked means the shown set changes day to
+  // day and, over time, surfaces whichever lenses this app's sources
+  // actually cover well — not just whatever got picked at random.
+  useEffect(()=>{
+    let on=true;
+    const rest=CATS.filter(c=>c!=="Featured");
+    const day=Math.floor(Date.now()/86400000);
+    const off=day%rest.length;
+    const candidates=[...rest.slice(off),...rest.slice(0,off)].slice(0,16);
+    // limit must be well above 20 here: listCollections derives its per-provider
+    // fetch size from limit, so asking for only ~21 silently caps supply and
+    // makes genuinely rich lenses (e.g. Bauhaus, Minimalism) look thin.
+    Promise.allSettled(candidates.map(c=>listCollections(CAT_Q[c],150,1,CAT_Q[c]).then(items=>({c,n:items.length}))))
+      .then(results=>{
+        if(!on) return;
+        const rich=results.filter(r=>r.status==="fulfilled"&&r.value.n>20).map(r=>r.value.c);
+        if(rich.length) setCatsShown(["Featured",...shuffle(rich).slice(0,9)]);
+      });
+    return ()=>{on=false;};
+  },[]);
   const [advColor,setAdvColor]=useState(""),[hexIn,setHexIn]=useState("");
   const [eraIdx,setEraIdx]=useState(-1); // -1 = Any (home floor)
   const [items,setItems]=useState([]);
@@ -904,12 +927,21 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
     setStatus("loading"); setItems([]); setEnd(false); pageRef.current=SESSION_PAGE;
     const run = color ? colorSearchCollections(color,colorText,24) : listCollections(textQ,24,SESSION_PAGE,rankQ);
     run.then(cols=>{ if(rid!==reqRef.current)return; setItems(cols); setStatus("idle"); if(color) setEnd(true);
-      // Guarantee filters carry relevant content: swap a thin lens for a fresh one.
-      if(!color && !query.trim() && cat!=="Featured" && cols.length<3 && !triedRef.current.has(cat)){
+      // Guarantee both the Featured feed and category pills carry real
+      // content: swap a thin query for a fresh one from the same pool.
+      // >20 results is the bar — a handful of items reads as broken or
+      // repetitive, not curated (pill pre-validation already aims for this,
+      // but this is the safety net for whatever slips through, including
+      // the Featured tab's own day-seeded term).
+      if(!color && !query.trim() && cols.length<=20 && !triedRef.current.has(cat)){
         triedRef.current.add(cat);
-        const used=new Set(catsShown);
-        const backup=Object.keys(CAT_Q).find(k=>k!=="Featured"&&!used.has(k)&&!triedRef.current.has(k));
-        if(backup){ setCatsShown(prev=>prev.map(c=>c===cat?backup:c)); setCat(backup); }
+        if(cat==="Featured"){
+          if(featuredQ!==FEATURED_SEEDS[0]) setFeaturedQ(FEATURED_SEEDS[0]); // "design" — the proven-strong fallback
+        } else {
+          const used=new Set(catsShown);
+          const backup=Object.keys(CAT_Q).find(k=>k!=="Featured"&&!used.has(k)&&!triedRef.current.has(k));
+          if(backup){ setCatsShown(prev=>prev.map(c=>c===cat?backup:c)); setCat(backup); }
+        }
       }
     }).catch(()=>{ if(rid!==reqRef.current)return; setStatus("error"); });
   },[cat,query,advColor,eraIdx,featuredQ,nonce]);
