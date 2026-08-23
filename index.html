@@ -692,13 +692,13 @@ function getKey(){try{return localStorage.getItem(LLM_KEY_STORE)||"";}catch(e){r
 function setKey(k){try{localStorage.setItem(LLM_KEY_STORE,k);}catch(e){}}
 
 const PROMPT_BRIEF =
-  "You are an art director writing ONE image-generation prompt from these reference images. Read them as a single mood, then write a vivid, specific, paste-ready prompt of 70–110 words as flowing prose (no labels or lists), following this spine:\n"+
-  "1) OPENING — lead with the SUBJECT and the primary STYLE/medium (the most load-bearing words first).\n"+
-  "2) BODY — colour palette (name the key colours), then light and mood, composition and framing, texture and materials, and era/reference.\n"+
-  "3) CONNECTION — close with the unifying intent (why it coheres) plus technical modifiers (aspect ratio, finish, level of detail).\n"+
-  "Commit to ONE clear output FORMAT and name it — poster, editorial spread, risograph print, studio photograph, 3D render, woven textile, cut-paper collage, packaging, record sleeve, etc. Open AND close differently every single time; never reuse a stock opening or ending, and never start with the same word. Be concrete and a little unexpected; surface a specific detail you actually see. "+
+  "You are an art director writing ONE image-generation prompt from these reference images. Read them as a single mood, then write a vivid, specific, paste-ready prompt of 70–110 words as flowing prose (no labels or lists), following this structure:\n"+
+  "1) ACTION + WHAT — open with an imperative action verb (Render, Create, Design, Compose, Illustrate, Produce...) plus the output FORMAT (poster, editorial spread, risograph print, studio photograph, 3D render, woven textile, cut-paper collage, packaging, record sleeve, etc.) and the concrete SUBJECT — the most load-bearing words first.\n"+
+  "2) CONTEXT — colour palette (name the key colours) and era/reference, woven in naturally.\n"+
+  "3) HOW — style and technical guidelines: light and mood, composition and framing, texture and materials, then technical modifiers (aspect ratio, finish, level of detail) as the close.\n"+
+  "Vary the action verb and sentence shape every single time; never reuse a stock opening or ending, and never start with the same word twice in a row. Be concrete and a little unexpected; surface a specific detail you actually see. "+
   "Describe a real visual SUBJECT or scene — never a category word like 'graphic design' or 'general' as the subject. Do NOT include any names, signatures, captions, or category words meant to be rendered as text in the image; keep lettering out entirely unless it is genuinely central to the references. "+
-  "Avoid filler words ('cohesive','aesthetic','visually striking','seamless'). Do not name or imitate real artists. Output only the prompt.";
+  "Avoid filler words and vague unifying statements ('cohesive','aesthetic','visually striking','seamless','ties it together','coheres') — every clause should add a concrete visual detail, not commentary about the mood. Do not name or imitate real artists. Output only the prompt.";
 // Gather factual metadata from the selected images, incl. extracted dominant colours.
 // Drop filenames, UUIDs, hashes and "Untitled" so they never become a subject.
 const isBadTitle = t => !t || /\.(png|jpe?g|gif|webp|svg|tiff?)$/i.test(t)
@@ -783,36 +783,46 @@ async function generatePromptLLM(items, key, meta){
   const text=await callModel(content,key,600,1);
   return {text, notes};
 }
+// Same ACTION + WHAT / CONTEXT / HOW structure as PROMPT_BRIEF, so the
+// no-key fallback and the real vision-model path read consistently. Every
+// clause carries a concrete visual detail — no vague "ties it together"
+// style filler, which added no information and was the main source of
+// the repetitive-sounding openings/closings when this template (the only
+// path that ever actually ran, if ANTHROPIC_API_KEY isn't configured)
+// pulled from a small phrase pool.
 function draftPromptFromMetadata(items, meta){
   meta = meta || {titles:[...new Set(items.map(i=>i.alt).filter(t=>t&&!isBadTitle(t)))].slice(0,4),
     media:[...new Set(items.map(i=>i.medium).filter(Boolean))].slice(0,2),
     makers:[...new Set(items.map(i=>i.by).filter(Boolean))].slice(0,2), dates:[], palette:[]};
-  const titles=meta.titles||[], makers=meta.makers||[], pal=(meta.palette||[]).slice(0,4), dates=(meta.dates||[]).slice(0,2);
+  const titles=meta.titles||[], pal=(meta.palette||[]).slice(0,4), dates=(meta.dates||[]).slice(0,2);
   const mediaMeta=(meta.media||[]).map(m=>String(m).toLowerCase()).slice(0,2);
   const R=a=>a[Math.floor(Math.random()*a.length)];
   const cap=s=>s.replace(/^./,c=>c.toUpperCase());
-  const openers=[
-    "One frame that distils the whole set —","Picture a single image holding this mood —",
-    "Render one scene built from these references —","A lone composition charged with this spirit —",
-    "Translate the entire board into a single image —","Conjure one piece from these references —",
-    "Distil the set into a single frame —"
-  ];
-  const formats=["a screen-printed poster","an editorial magazine spread","a matte risograph print","a studio photograph","a 3D-rendered still","a hand-set letterpress piece","a woven textile panel","a cut-paper collage","a cyanotype print","a gouache study","a vinyl record sleeve","a packaging mockup"];
+
+  const actions=["Render","Create","Generate","Design","Compose","Produce","Illustrate","Craft","Build"];
+  const formats=["a screen-printed poster","an editorial magazine spread","a matte risograph print","a studio photograph","a 3D-rendered still","a hand-set letterpress piece","a woven textile panel","a cut-paper collage","a cyanotype print","a gouache study","a vinyl record sleeve","a packaging mockup","a hand-bound zine cover","a silkscreen print","a woodblock print","an architectural elevation drawing","a ceramic glaze study","a hand-tinted photograph"];
   const fmt = mediaMeta.length ? mediaMeta.join(" / ") : R(formats);
-  const palLines = pal.length ? [`Palette of ${pal.join(", ")}, used with intent.`,`Built on ${pal.join(", ")}, colour doing the work.`,`Colour led by ${pal.join(", ")}.`] : [""];
-  const lights=["light raking across the forms","flat, even studio light","low directional light with deep shadow","soft daylight with gentle falloff","hard noon light and crisp edges","diffuse overcast glow"];
-  const comps=["deliberate composition with clear hierarchy","off-grid layout with confident negative space","tight, centred framing","asymmetric balance and generous margins","dense, layered arrangement"];
-  const tex=["tactile texture and honest materials","fine grain and visible paper tooth","smooth, matte surfaces","worn, analogue imperfection","crisp vector flatness against subtle noise"];
-  const connect=["It coheres through one disciplined mood.","Everything bends to a single intent.","Held together by one unwavering tone.","Restraint is what ties it together.","A single idea runs through every element."];
-  const tech=["4:5, high detail, editorial finish.","3:4, fine grain.","1:1, crisp and considered.","2:3, high contrast.","16:9, soft film grain.","4:5, muted matte finish."];
+  const lights=["light raking across the forms","flat, even studio light","low directional light with deep shadow","soft daylight with gentle falloff","hard noon light and crisp edges","diffuse overcast glow","a single hard spotlight","a soft backlit rim glow","cool light through a north-facing window","warm late-afternoon light"];
+  const comps=["deliberate composition with clear hierarchy","an off-grid layout with confident negative space","tight, centred framing","asymmetric balance and generous margins","a dense, layered arrangement","a strict modular grid","one dominant focal point against quiet surroundings","overlapping planes at odd angles","a wide establishing view with a single anchor detail"];
+  const tex=["tactile texture and honest materials","fine grain and visible paper tooth","smooth, matte surfaces","worn, analogue imperfection","crisp vector flatness against subtle noise","raised ink with visible print registration","a soft woven fabric surface","brushed metal against hard edges","unglazed ceramic with visible throwing marks"];
+  const tech=["4:5, high detail, editorial finish.","3:4, fine grain.","1:1, crisp and considered.","2:3, high contrast.","16:9, soft film grain.","4:5, muted matte finish.","3:2, sharp focus throughout.","5:4, a subtle vignette."];
   const subject = (titles[0] && !isBadTitle(titles[0])) ? titles[0] : "an original abstract composition";
-  let s = `${R(openers)} ${subject}, as ${fmt}.`;
-  const pl=R(palLines); if(pl) s += " "+pl;
-  s += ` ${cap(R(lights))}; ${R(comps)}.`;
-  s += ` ${cap(R(tex))}; clean surfaces, no stray lettering or labels.`;
-  if(dates.length) s += ` Period cues from the ${dates.join(", ")} era.`;
-  s += ` ${R(connect)} ${R(tech)}`;
-  return s;
+  const period = dates.length ? `${dates.join(", ")} era` : null;
+  const palText = pal.length ? pal.join(", ") : null;
+
+  // 1) ACTION + WHAT — imperative verb, format, subject (varies which verb
+  // and sentence shape leads, not just synonyms within one fixed skeleton).
+  const actionWhat = R([
+    `${R(actions)} ${fmt} of ${subject}.`,
+    `${R(actions)} ${subject} as ${fmt}.`,
+    `${cap(fmt)}: ${R(actions).toLowerCase()} ${subject}.`,
+  ]);
+  // 2) CONTEXT — palette and era, only when real data exists.
+  const context=[palText?`In a palette of ${palText}.`:null, period?`Reference the ${period}.`:null].filter(Boolean).join(" ");
+  // 3) HOW — style, composition, texture, then technical close.
+  const how = `${cap(R(lights))}, ${R(comps)}, ${R(tex)}. No stray lettering or labels. ${R(tech)}`;
+
+  return [actionWhat, context, how].filter(Boolean).join(" ");
 }
 
 /* ============================================================================
