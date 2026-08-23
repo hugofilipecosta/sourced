@@ -53,7 +53,7 @@ nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .quotebar{max-width:720px;margin:56px auto 0;padding:0 24px;text-align:center}
 .quotebar .q{font-size:18px;line-height:1.5;color:var(--ink)}
 .quotebar .a{display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.04em}
-.pillsRow{max-width:960px;width:fit-content;margin:24px auto 0;display:flex;align-items:center;gap:8px}
+.pillsRow{max-width:min(960px,100%);width:fit-content;margin:24px auto 0;display:flex;align-items:center;gap:8px}
 .pills{display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:8px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
 .pills::-webkit-scrollbar{display:none}
 .pill{white-space:nowrap}
@@ -522,8 +522,32 @@ const CAT_Q = {Featured:"design",Brutalist:"brutalist",Bauhaus:"bauhaus",Swiss:"
   Letterpress:"letterpress","Screen Print":"screen print",Woodcut:"woodcut print",
   Blackletter:"blackletter typography",Packaging:"packaging design","Type Specimen":"type specimen",
   Signage:"wayfinding signage","Data Viz":"data visualization",Generative:"generative art",
-  Textile:"textile pattern",Scandi:"scandinavian design"};
+  Textile:"textile pattern",Scandi:"scandinavian design",
+  // Added for breadth/diversity: broader, well-catalogued lenses (museum
+  // collection staples) mixed with a few distinctive niche ones, chosen to
+  // actually have real representation across Are.na/V&A/AIC/Met/Tumblr
+  // rather than just sounding cool with no supply behind them.
+  Photography:"photography",Architecture:"architecture",Furniture:"furniture design",
+  Ceramics:"ceramics",Illustration:"illustration",Editorial:"editorial design",
+  Branding:"brand identity","Pattern Design":"pattern design",Jewelry:"jewelry design",
+  Costume:"costume design","Toy Design":"toy design","Product Design":"product design",
+  Calligraphy:"calligraphy","Art Nouveau":"art nouveau",Ukiyo:"ukiyo-e woodblock",
+  "Folk Art":"folk art",Tapestry:"tapestry textile",Glassware:"glass design",
+  Metalwork:"metalwork design",Postmodern:"postmodern design","Space Age":"space age design",
+  "Concrete Poetry":"concrete poetry","Album Art":"album cover art",
+  Streetwear:"streetwear design","Motion Graphics":"motion graphics"};
 const CATS = Object.keys(CAT_Q);
+// Local, per-visitor "what's wanted" signal: how often this browser has
+// clicked each pill, persisted in localStorage. No backend/global learning
+// (there's no datastore in this static app) — this only biases which of the
+// validated-rich candidates get shown to *this* visitor, blended with the
+// day-rotated richness check so there's still fresh discovery every day.
+const AFFINITY_KEY="sourced.pillAffinity";
+function getAffinity(){ try{ return JSON.parse(localStorage.getItem(AFFINITY_KEY)||"{}"); }catch(e){ return {}; } }
+function bumpAffinity(cat){ try{ const a=getAffinity(); a[cat]=(a[cat]||0)+1; localStorage.setItem(AFFINITY_KEY,JSON.stringify(a)); }catch(e){} }
+function affinityShuffle(arr,affinity){
+  return arr.map(c=>[Math.random()*(1+(affinity[c]||0)*2),c]).sort((a,b)=>b[0]-a[0]).map(x=>x[1]);
+}
 
 // Rotating hero word.
 // Less-obvious design / product / graphic / tech quotes — one per page load.
@@ -914,7 +938,11 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
         // time the user actually clicks it (validation and click happen
         // against slightly different sample windows).
         const thin=scored.filter(x=>x.n<16&&x.n>=8).map(x=>x.c);
-        let chosen=rich.length>=9 ? shuffle(rich).slice(0,9) : [...shuffle(rich),...thin].slice(0,9);
+        // Bias toward what this visitor actually clicks before (affinity),
+        // not just a uniform shuffle — still random enough for daily
+        // discovery, but pills they engage with surface more often.
+        const affinity=getAffinity();
+        let chosen=rich.length>=9 ? affinityShuffle(rich,affinity).slice(0,9) : [...affinityShuffle(rich,affinity),...affinityShuffle(thin,affinity)].slice(0,9);
         // Total validation failure (e.g. every check errored) — fall back to
         // the unvalidated candidate slice itself rather than showing nothing.
         if(!chosen.length) chosen=candidates.slice(0,9);
@@ -997,7 +1025,7 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
         <div className="pillsRow">
           <div className="pills">
             {catsShown ? catsShown.map(c=>(
-              <button key={c} className={"pill"+(c===cat?" active":"")} onClick={()=>{setCat(c);setInput("");setQuery("");}}>{c}</button>))
+              <button key={c} className={"pill"+(c===cat?" active":"")} onClick={()=>{setCat(c);setInput("");setQuery("");if(c!=="Featured")bumpAffinity(c);}}>{c}</button>))
               : Array.from({length:9}).map((_,i)=>(
                 <div key={i} className="skel" style={{width:72+((i*17)%44),height:32,borderRadius:999,flexShrink:0}}/>))}
           </div>
