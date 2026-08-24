@@ -26,8 +26,10 @@ a{color:inherit;text-decoration:none;cursor:pointer}
 header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--line);background:rgba(250,250,248,.85);backdrop-filter:blur(8px)}
 .tagline{font-family:'Lexend Deca',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
 @media(max-width:700px){
-  header a.logo{font-size:23px!important}
+  header{padding:16px}
+  header a.logo{font-size:15px!important}
   header .r{display:none}
+  .filterBtn{max-width:130px!important;font-size:12px!important;padding:7px 10px!important}
 }
 nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .chip-live{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft)}
@@ -53,17 +55,15 @@ nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .quotebar{max-width:720px;margin:56px auto 0;padding:0 24px;text-align:center}
 .quotebar .q{font-size:18px;line-height:1.5;color:var(--ink)}
 .quotebar .a{display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.04em}
-.pillsRow{max-width:min(960px,100%);width:fit-content;margin:24px auto 0;display:flex;align-items:center;gap:8px}
-.pills{display:flex;flex-wrap:nowrap;justify-content:flex-start;gap:8px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
-.pills::-webkit-scrollbar{display:none}
-.pill{white-space:nowrap}
-.pills .pill:first-child{position:sticky;left:0;z-index:1;background:var(--paper)}
-.tunebtn{display:grid;place-items:center;width:32px;height:32px;border-radius:999px;border:1px solid var(--line);background:transparent;cursor:pointer;flex-shrink:0;color:var(--ink)}
-.tunebtn:hover{border-color:var(--lineS)}
-.tunebtn .material-symbols-outlined{font-size:20px}
-.pill{border:1px solid var(--line);background:transparent;color:var(--soft);font:inherit;font-size:12.5px;padding:7px 14px;border-radius:999px;cursor:pointer}
-.pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.pills .pill:first-child.active{background:var(--ink)}
+.filterDropdown{position:relative}
+.filterBtn{display:flex;align-items:center;gap:4px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:8px 14px;border-radius:999px;cursor:pointer;max-width:100%}
+.filterBtn:hover{border-color:var(--lineS)}
+.filterBtn .flabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.filterBtn .material-symbols-outlined{font-size:18px;transition:transform .2s;flex-shrink:0}
+.filterMenu{position:absolute;top:calc(100% + 8px);right:0;background:var(--raised);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -16px rgba(21,20,15,.25);padding:6px;min-width:200px;max-height:70vh;overflow-y:auto;z-index:20}
+.filterMenu button{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.filterMenu button:hover{background:var(--line)}
+.filterMenu button.active{background:var(--ink);color:var(--paper)}
 .label{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 14px}
 .label .l{font-size:13.5px;font-weight:600}
 .label .r{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft)}
@@ -535,7 +535,18 @@ const CAT_Q = {Featured:"design",Brutalist:"brutalist",Bauhaus:"bauhaus",Swiss:"
   "Folk Art":"folk art",Tapestry:"tapestry textile",Glassware:"glass design",
   Metalwork:"metalwork design",Postmodern:"postmodern design","Space Age":"space age design",
   "Concrete Poetry":"concrete poetry","Album Art":"album cover art",
-  Streetwear:"streetwear design","Motion Graphics":"motion graphics"};
+  Streetwear:"streetwear design","Motion Graphics":"motion graphics",
+  // Depth across the classical seven arts (architecture, sculpture,
+  // painting, music, literature, dance/performance, cinema) — the pool
+  // above skewed heavily toward graphic design/art movements, with Music,
+  // Literature, Dance and Cinema barely represented as visual angles.
+  Painting:"painting",Watercolor:"watercolor painting",Mural:"mural art",
+  Sculpture:"sculpture","Installation Art":"installation art",
+  "Interior Design":"interior design","Urban Planning":"urban planning",
+  "Concert Posters":"concert poster","Book Design":"book cover design",
+  Manuscript:"illuminated manuscript","Stage Design":"theatre stage design",
+  "Performance Photo":"performance photography","Film Posters":"film poster",
+  "Film Stills":"film still",Storyboard:"storyboard art","Set Design":"film set design"};
 const CATS = Object.keys(CAT_Q);
 // Local, per-visitor "what's wanted" signal: how often this browser has
 // clicked each pill, persisted in localStorage. No backend/global learning
@@ -885,12 +896,26 @@ function Card({c,i}){
   );
 }
 
-function Header(){
-  const quote=useMemo(()=>pick(DESIGN_QUOTES),[]);
+function Header({catsShown,cat,setCat,setInput,setQuery}){
+  const [open,setOpen]=useState(false);
   return (
     <header>
       <a className="wm logo" style={{fontSize:22}} onClick={()=>go("#/explore")}>SSSSOURCED</a>
-      <span className="r">“{quote.t}” — {quote.a}</span>
+      {catsShown&&(
+        <div className="filterDropdown">
+          <button className="filterBtn" onClick={()=>setOpen(o=>!o)}>
+            <span className="flabel">{cat}</span><span className="material-symbols-outlined" style={{transform:open?"rotate(180deg)":"none"}}>expand_more</span>
+          </button>
+          {open&&(<>
+            <div style={{position:"fixed",inset:0,zIndex:19}} onClick={()=>setOpen(false)}/>
+            <div className="filterMenu">
+              {catsShown.map(c=>(
+                <button key={c} className={c===cat?"active":""}
+                  onClick={()=>{setCat(c);setInput("");setQuery("");setOpen(false);if(c!=="Featured")bumpAffinity(c);}}>{c}</button>))}
+            </div>
+          </>)}
+        </div>
+      )}
     </header>
   );
 }
@@ -902,7 +927,7 @@ function ErrorState({onRetry}){
     <button className="retry" onClick={onRetry}>Retry</button></div>);
 }
 
-function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQuery,cat,setCat}){
+function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQuery,cat,setCat,catsShown,setCatsShown}){
   const [nonce,setNonce]=useState(0);
   // Date-seeded, not random: the Featured tab rotates through the curated
   // FEATURED_SEEDS pool once per calendar day (UTC). Same term for everyone
@@ -910,11 +935,10 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
   // tomorrow (stays fresh — a pure random pick per load was unpredictable
   // within a session, while a single fixed term went stale after day one).
   const [featuredQ,setFeaturedQ]=useState(()=>{ const day=Math.floor(Date.now()/86400000); return FEATURED_SEEDS[day%FEATURED_SEEDS.length]; });
-  // Starts null (not a guessed list) specifically so pills never visibly
-  // swap after first paint: nothing renders until validation below has
-  // picked the final set, which is then set exactly once and never
-  // replaced again — no flicker, no names/positions changing later.
-  const [catsShown,setCatsShown]=useState(null);
+  // catsShown/setCatsShown come from App now (lifted so the header's filter
+  // dropdown can read it too). Starts null there specifically so the filter
+  // never visibly changes after first paint: it renders nothing until
+  // validation below has picked the final set, set exactly once.
   const triedRef=useRef(new Set());
   // Filters must actually have content: validate a day-rotated slice of the
   // 40-lens pool against real result counts (>=16) before ever showing them
@@ -964,6 +988,9 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
   const [eraIdx,setEraIdx]=useState(-1); // -1 = Any (home floor)
   const [items,setItems]=useState([]);
   const [status,setStatus]=useState("loading"); // loading | idle | error
+  // Fresh quote each time a new loading phase starts (not on every re-render
+  // while it's still loading) — recomputes only when status itself changes.
+  const loadingQuote=useMemo(()=>pick(DESIGN_QUOTES),[status==="loading"]);
   const [more,setMore]=useState(false);
   const [end,setEnd]=useState(false);
   const pageRef=useRef(SESSION_PAGE), reqRef=useRef(0);
@@ -1030,22 +1057,18 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
         <div className="search">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{flexShrink:0,opacity:.4}}>
             <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-          <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Search by style, colour, or theme"/>
-        </div>
-        <div className="pillsRow">
-          <div className="pills">
-            {catsShown ? catsShown.map(c=>(
-              <button key={c} className={"pill"+(c===cat?" active":"")} onClick={()=>{setCat(c);setInput("");setQuery("");if(c!=="Featured")bumpAffinity(c);}}>{c}</button>))
-              : Array.from({length:9}).map((_,i)=>(
-                <div key={i} className="skel" style={{width:72+((i*17)%44),height:32,borderRadius:999,flexShrink:0}}/>))}
-          </div>
+          <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Search by style, colour, or subject"/>
         </div>
       </div>
       <div className="feed">
-        {status==="loading"?<div style={{display:"flex",gap:18,alignItems:"flex-start"}}>
-          {Array.from({length:colCount}).map((_,ci)=>(<div key={ci} style={{flex:1,minWidth:0}}>
-            {Array.from({length:3}).map((_,i)=><div className="card" key={i}><div className="skel" style={{height:[320,220,260][(ci+i)%3]}}/></div>)}
-          </div>))}</div>
+        {status==="loading"?<>
+          <div className="quotebar"><p className="q">“{loadingQuote.t}”</p><span className="a">— {loadingQuote.a}</span></div>
+          <div style={{display:"flex",gap:18,alignItems:"flex-start"}}>
+            {Array.from({length:colCount}).map((_,ci)=>(<div key={ci} style={{flex:1,minWidth:0}}>
+              {Array.from({length:3}).map((_,i)=><div className="card" key={i}><div className="skel" style={{height:[320,220,260][(ci+i)%3]}}/></div>)}
+            </div>))}
+          </div>
+        </>
           :status==="error"?<ErrorState onRetry={()=>setNonce(n=>n+1)}/>
           :items.length===0?<div className="empty">nothing here yet — try a different search</div>
           :<div style={{display:"flex",gap:18,alignItems:"flex-start"}}>
@@ -1187,6 +1210,7 @@ function PromptModal({items,onClose}){
   const [copied,setCopied]=useState(false);
   const [notes,setNotes]=useState(null);
   const [imgCopyState,setImgCopyState]=useState("idle"); // idle | copied | error
+  const loadingQuote=useMemo(()=>pick(DESIGN_QUOTES),[]);
   const run=useCallback(async()=>{
     setErr(false);setBusy(true);setCopied(false);setNotes(null);
     const meta=await collectMeta(items);
@@ -1220,7 +1244,10 @@ function PromptModal({items,onClose}){
         <div className="thumbs">{items.slice(0,12).map((it,i)=>
           <img key={it.id} src={it.src} alt="" title={notes&&notes[i]?noteLine(notes[i]):undefined}/>)}</div>
         {busy
-          ? <div className="loader" style={{padding:"30px 0"}}><span className="material-symbols-outlined loadericon">package_2</span></div>
+          ? <div className="loader" style={{padding:"30px 0",flexDirection:"column",alignItems:"center",gap:14}}>
+              <span className="material-symbols-outlined loadericon">package_2</span>
+              <div className="quotebar" style={{margin:0}}><p className="q" style={{fontSize:14}}>“{loadingQuote.t}”</p><span className="a">— {loadingQuote.a}</span></div>
+            </div>
           : <div>
               <textarea className="result" value={out} onChange={e=>setOut(e.target.value)} spellCheck={false}/>
               {err&&<div className="tiny" style={{color:"var(--soft)",marginTop:8}}>Quick draft — full AI analysis wasn't available this time.</div>}
@@ -1273,6 +1300,9 @@ function App(){
   // and back — Explore fully unmounts on route change (different component
   // type), which would otherwise reset the search box and active filter.
   const [input,setInput]=useState(""),[query,setQuery]=useState(""),[cat,setCat]=useState("Featured");
+  // Also lifted so the header's filter dropdown (rendered outside Explore)
+  // can read/drive it; Explore still owns the validation effect that fills it.
+  const [catsShown,setCatsShown]=useState(null);
   const has=useCallback(it=>sel.some(s=>s.src===it.src),[sel]);
   const toggle=useCallback(it=>setSel(s=>s.some(x=>x.src===it.src)?s.filter(x=>x.src!==it.src):[...s,it]),[]);
   const selectMany=useCallback(items=>setSel(s=>{const m=new Map(s.map(x=>[x.src,x]));items.forEach(it=>it.src&&m.set(it.src,it));return[...m.values()];}),[]);
@@ -1282,10 +1312,11 @@ function App(){
   if(route.name==="collection") page=<CollectionDetail id={route.id}/>;
   else if(route.name==="curator") page=<CuratorProfile handle={route.handle}/>;
   else page=<Explore searchOpen={searchOpen} setSearchOpen={setSearchOpen} onSources={()=>setKeysOpen(true)}
-    input={input} setInput={setInput} query={query} setQuery={setQuery} cat={cat} setCat={setCat}/>;
+    input={input} setInput={setInput} query={query} setQuery={setQuery} cat={cat} setCat={setCat}
+    catsShown={catsShown} setCatsShown={setCatsShown}/>;
   return (
     <SelCtx.Provider value={ctx}>
-      <Header/>
+      <Header catsShown={route.name==="explore"?catsShown:null} cat={cat} setCat={setCat} setInput={setInput} setQuery={setQuery}/>
       {page}
       <div className="shell"><div className="footer">
         <span className="wm logo" style={{fontSize:20}}>SSSSOURCED</span>
