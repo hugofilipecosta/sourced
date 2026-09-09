@@ -27,7 +27,7 @@ header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-c
 .tagline{font-family:'Lexend Deca',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
 @media(max-width:700px){
   header a.logo{font-size:23px!important}
-  .filterBtn{max-width:130px!important;font-size:12px!important;padding:7px 10px!important}
+  .pill{font-size:12px!important;padding:6px 12px!important}
 }
 nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .chip-live{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft)}
@@ -53,15 +53,10 @@ nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .quotebar{max-width:720px;margin:56px auto 40px;padding:0 24px;text-align:center}
 .quotebar .q{font-size:18px;line-height:1.5;color:var(--ink)}
 .quotebar .a{display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.04em}
-.filterDropdown{position:relative;display:flex;justify-content:center;margin:20px auto 0}
-.filterBtn{display:flex;align-items:center;gap:4px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:8px 14px;border-radius:999px;cursor:pointer;max-width:100%}
-.filterBtn:hover{border-color:var(--lineS)}
-.filterBtn .flabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.filterBtn .material-symbols-outlined{font-size:18px;transition:transform .2s;flex-shrink:0}
-.filterMenu{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--raised);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -16px rgba(21,20,15,.25);padding:6px;min-width:200px;max-height:70vh;overflow-y:auto;z-index:20}
-.filterMenu button{display:block;width:100%;text-align:left;padding:9px 12px;border-radius:8px;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
-.filterMenu button:hover{background:var(--line)}
-.filterMenu button.active{background:var(--ink);color:var(--paper)}
+.pillsRow{max-width:min(720px,100%);margin:20px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.pill{border:1px solid var(--line);background:transparent;color:var(--soft);font:inherit;font-size:13px;padding:8px 14px;border-radius:999px;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill:hover{border-color:var(--lineS)}
+.pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .label{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 14px}
 .label .l{font-size:13.5px;font-weight:600}
 .label .r{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft)}
@@ -122,6 +117,7 @@ nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .empty{text-align:center;padding:64px 0;font-family:'Lexend Deca',sans-serif;font-weight:600;font-size:18px;color:var(--soft)}
 .loader{display:flex;justify-content:center;padding:34px 0}
+.loadingState{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--paper);min-height:60vh;padding:60px 24px;position:relative;z-index:1}
 .loader .star{font-size:28px;color:var(--amber);animation:loaderspin 1.1s cubic-bezier(.5,0,.5,1) infinite;display:inline-block}
 .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
 .loader .loadericon{font-size:34px;color:var(--ink);animation:loaderspin 1.1s cubic-bezier(.5,0,.5,1) infinite;display:inline-block}
@@ -149,13 +145,16 @@ nav{display:flex;align-items:center;gap:16px;font-size:13.5px;color:var(--soft)}
 .overlay{position:fixed;inset:0;background:rgba(21,20,15,.94);z-index:40;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal{background:var(--paper);border-radius:14px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:22px}
 .modal h3{font-family:'Lexend Deca',sans-serif;font-weight:700;font-size:22px;margin:0 0 4px}
-.modal .msub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft);margin-bottom:14px}
+.modal .msub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--soft)}
+.mhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.iconBtn{padding:8px;border-radius:999px;line-height:0;flex-shrink:0}
+.iconBtn:disabled{opacity:.4;cursor:default}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .thumbs img{width:54px;height:54px;object-fit:cover;border-radius:6px;background:var(--ambersoft)}
 .result{width:100%;min-height:120px;border:1px solid var(--lineS);border-radius:10px;padding:12px;font:inherit;font-size:13.5px;line-height:1.55;color:var(--ink);background:var(--raised);resize:vertical}
 .keyrow{display:flex;gap:8px;margin-top:12px}
 .keyrow input{flex:1;border:1px solid var(--lineS);border-radius:8px;padding:8px 12px;font:inherit;font-size:12.5px;font-family:'IBM Plex Mono',monospace}
-.mfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.mfoot{display:flex;justify-content:flex-start;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
 .tiny{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--soft)}
 .link{color:var(--accentText);cursor:pointer}
 </style>
@@ -909,7 +908,7 @@ function ErrorState({onRetry}){
     <button className="retry" onClick={onRetry}>Retry</button></div>);
 }
 
-function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQuery,cat,setCat,catsShown,setCatsShown}){
+function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQuery,cat,setCat,catsShown,setCatsShown,onLoadingChange}){
   const [nonce,setNonce]=useState(0);
   // Date-seeded, not random: the Featured tab rotates through the curated
   // FEATURED_SEEDS pool once per calendar day (UTC). Same term for everyone
@@ -917,12 +916,11 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
   // tomorrow (stays fresh — a pure random pick per load was unpredictable
   // within a session, while a single fixed term went stale after day one).
   const [featuredQ,setFeaturedQ]=useState(()=>{ const day=Math.floor(Date.now()/86400000); return FEATURED_SEEDS[day%FEATURED_SEEDS.length]; });
-  // catsShown/setCatsShown come from App now (lifted so the header's filter
-  // dropdown can read it too). Starts null there specifically so the filter
+  // catsShown/setCatsShown come from App now (lifted so filters survive
+  // navigating away and back). Starts null there specifically so the filter
   // never visibly changes after first paint: it renders nothing until
   // validation below has picked the final set, set exactly once.
   const triedRef=useRef(new Set());
-  const [filterOpen,setFilterOpen]=useState(false);
   // Filters must actually have content: validate a day-rotated slice of the
   // 40-lens pool against real result counts (>=16) before ever showing them
   // as pills. Rotating which slice gets checked means the shown set changes
@@ -975,6 +973,7 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
   // Fresh quote each time a new loading phase starts (not on every re-render
   // while it's still loading) — recomputes only when status itself changes.
   const loadingQuote=useMemo(()=>pick(DESIGN_QUOTES),[status==="loading"]);
+  useEffect(()=>{ if(onLoadingChange) onLoadingChange(status==="loading"); },[status,onLoadingChange]);
   const [more,setMore]=useState(false);
   const [end,setEnd]=useState(false);
   const pageRef=useRef(SESSION_PAGE), reqRef=useRef(0);
@@ -1044,24 +1043,16 @@ function Explore({searchOpen,setSearchOpen,onSources,input,setInput,query,setQue
           <input value={input} onChange={e=>setInput(e.target.value)} placeholder="Search by style, colour, or subject"/>
         </div>
         {catsShown&&(
-          <div className="filterDropdown">
-            <button className="filterBtn" onClick={()=>setFilterOpen(o=>!o)}>
-              <span className="flabel">{cat}</span><span className="material-symbols-outlined" style={{transform:filterOpen?"rotate(180deg)":"none"}}>expand_more</span>
-            </button>
-            {filterOpen&&(<>
-              <div style={{position:"fixed",inset:0,zIndex:19}} onClick={()=>setFilterOpen(false)}/>
-              <div className="filterMenu">
-                {catsShown.map(c=>(
-                  <button key={c} className={c===cat?"active":""}
-                    onClick={()=>{setCat(c);setInput("");setQuery("");setFilterOpen(false);if(c!=="Featured")bumpAffinity(c);}}>{c}</button>))}
-              </div>
-            </>)}
+          <div className="pillsRow">
+            {catsShown.map(c=>(
+              <button key={c} className={"pill"+(c===cat?" active":"")}
+                onClick={()=>{setCat(c);setInput("");setQuery("");if(c!=="Featured")bumpAffinity(c);}}>{c}</button>))}
           </div>
         )}
       </div>
       <div className="feed">
         {status==="loading"?
-          <div className="loader" style={{flexDirection:"column",alignItems:"center",padding:"60px 0"}}>
+          <div className="loadingState" key={loadingQuote.t}>
             <span className="material-symbols-outlined loadericon">package_2</span>
             <div className="quotebar" style={{margin:"20px auto 0"}}><p className="q">“{loadingQuote.t}”</p><span className="a">— {loadingQuote.a}</span></div>
           </div>
@@ -1235,8 +1226,15 @@ function PromptModal({items,onClose}){
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
-        <h3>Your prompt</h3>
-        <div className="msub">Edit anything above before copying.{notes&&" Hover an image to see what it contributed."}</div>
+        <div className="mhead">
+          <div>
+            <h3>Your prompt</h3>
+            <div className="msub">Edit anything above before copying.{notes&&" Hover an image to see what it contributed."}</div>
+          </div>
+          <button className="btn btn-ghost iconBtn" onClick={run} disabled={busy} title="Regenerate" aria-label="Regenerate">
+            <span className="material-symbols-outlined" style={{fontSize:18}}>refresh</span>
+          </button>
+        </div>
         <div className="thumbs">{items.slice(0,12).map((it,i)=>
           <img key={it.id} src={it.src} alt="" title={notes&&notes[i]?noteLine(notes[i]):undefined}/>)}</div>
         {busy
@@ -1250,7 +1248,6 @@ function PromptModal({items,onClose}){
               <div className="mfoot">
                 <button className="btn btn-primary" onClick={copy}>{copied?"Copied ✓":"Copy prompt"}</button>
                 <button className="btn btn-ghost" onClick={copyImages}>{imgCopyState==="copied"?"Copied ✓":imgCopyState==="error"?"Couldn't copy":"Copy images"}</button>
-                <button className="btn btn-ghost" onClick={run}>↻ Regenerate</button>
               </div>
             </div>}
       </div>
@@ -1296,9 +1293,10 @@ function App(){
   // and back — Explore fully unmounts on route change (different component
   // type), which would otherwise reset the search box and active filter.
   const [input,setInput]=useState(""),[query,setQuery]=useState(""),[cat,setCat]=useState("Featured");
-  // Also lifted so the header's filter dropdown (rendered outside Explore)
-  // can read/drive it; Explore still owns the validation effect that fills it.
+  // catsShown is also lifted for the same reason; Explore still owns the
+  // validation effect that fills it.
   const [catsShown,setCatsShown]=useState(null);
+  const [feedLoading,setFeedLoading]=useState(false);
   const has=useCallback(it=>sel.some(s=>s.src===it.src),[sel]);
   const toggle=useCallback(it=>setSel(s=>s.some(x=>x.src===it.src)?s.filter(x=>x.src!==it.src):[...s,it]),[]);
   const selectMany=useCallback(items=>setSel(s=>{const m=new Map(s.map(x=>[x.src,x]));items.forEach(it=>it.src&&m.set(it.src,it));return[...m.values()];}),[]);
@@ -1309,14 +1307,15 @@ function App(){
   else if(route.name==="curator") page=<CuratorProfile handle={route.handle}/>;
   else page=<Explore searchOpen={searchOpen} setSearchOpen={setSearchOpen} onSources={()=>setKeysOpen(true)}
     input={input} setInput={setInput} query={query} setQuery={setQuery} cat={cat} setCat={setCat}
-    catsShown={catsShown} setCatsShown={setCatsShown}/>;
+    catsShown={catsShown} setCatsShown={setCatsShown} onLoadingChange={setFeedLoading}/>;
+  const hideFooter = route.name==="explore" && feedLoading;
   return (
     <SelCtx.Provider value={ctx}>
       <Header/>
       {page}
-      <div className="shell"><div className="footer">
+      {!hideFooter&&<div className="shell"><div className="footer">
         <span className="wm logo" style={{fontSize:20}}>SSSSOURCED</span>
-        <div className="tagline">Source. Curate. Generate.</div></div></div>
+        <div className="tagline">Source. Curate. Generate.</div></div></div>}
       {sel.length>0&&(<div className="selbar">
         <span className="c">{sel.length} in collection</span>
         <span className="x" onClick={clear}>clear</span>
