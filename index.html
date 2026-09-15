@@ -430,6 +430,28 @@ const P_PIXABAY = {
   async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
 };
 
+// Europeana — pan-European libraries/museums/archives aggregator (thousands of
+// contributing institutions). Widens daily rotation with European design
+// history (posters, Bauhaus/Art Nouveau graphics, typography, textiles) not
+// covered by the single-institution museum sources above. Needs a free key
+// (wskey); off until one is present locally or via the future proxy.
+const P_EUROPEANA = {
+  key:"eu", base:"https://api.europeana.eu/record/v2",
+  cleanCreator(s){return (s||"").replace(/^https?:\/\/data\.europeana\.eu\/(agent|organization)\/base\/\d+$/,"").trim();},
+  norm(r){const creator=this.cleanCreator((r.dcCreator&&r.dcCreator[0])||"")||(r.dataProvider&&r.dataProvider[0])||null;
+    const yr=(r.year&&parseInt(r.year[0],10))||0;
+    return{id:"eu"+r.id,src:(r.edmPreview&&r.edmPreview[0])||null,alt:(r.title&&r.title[0])||"Untitled",
+      sourceUrl:r.guid||null,by:creator,cidKey:slug(creator||""),
+      medium:(r.dcType&&r.dcType[0])||null,date:(r.year&&String(r.year[0]))||null,_year:yr};},
+  async search(q,limit,page=SESSION_PAGE){const ak=keyGet("europeana"); if(!ak)return [];
+    const start=(page-1)*limit+1;
+    const d=await getJSON(`${this.base}/search.json?wskey=${encodeURIComponent(ak)}&query=${encodeURIComponent(q)}&qf=TYPE:IMAGE&reusability=open&media=true&rows=${limit}&start=${start}`);
+    return (d.items||[]).map(r=>this.norm(r)).filter(x=>x.src&&x.by&&!(x._year&&x._year<YEAR_FROM)&&!(YEAR_TO&&x._year&&x._year>YEAR_TO));},
+  async list(q,per,page=SESSION_PAGE){const a=await this.search(q,80,page);return groupByCreator(a).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,"").replace(/-/g," ");const a=await this.search(name,40);const g={cidKey:slug(name),name:a[0]?a[0].by:name,works:a};return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
+};
+
 // Wikimedia Commons — keyless, CORS via origin=*; huge breadth.
 const P_WIKI = {
   key:"wk", base:"https://commons.wikimedia.org/w/api.php",
@@ -495,8 +517,8 @@ const P_MET = {
 };
 
 // Wikimedia stays defined but is OUT of the default feed (too much random content).
-const PROVIDERS = {ch:P_CHANNELS, tb:P_TUMBLR, ai:P_AIC, va:P_VAM, me:P_MET, un:P_UNSPLASH, px:P_PEXELS, pb:P_PIXABAY, wk:P_WIKI};
-const PROV_ORDER = ["ch","tb","ai","va","me","un","px","pb"];
+const PROVIDERS = {ch:P_CHANNELS, tb:P_TUMBLR, ai:P_AIC, va:P_VAM, me:P_MET, un:P_UNSPLASH, px:P_PEXELS, pb:P_PIXABAY, eu:P_EUROPEANA, wk:P_WIKI};
+const PROV_ORDER = ["ch","tb","ai","va","me","un","px","pb","eu"];
 
 /* ---------- unified Sourced API (provider-agnostic) ---------- */
 // Trendy 2026 defaults — drawn from what's actually rising on inspiration
@@ -610,7 +632,7 @@ const FEATURED_SEEDS = ["design","graphic design","poster","typography","editori
 
 // --- ranking layer ---------------------------------------------------------
 // Curated sources rank higher than generic ones.
-const PROV_WEIGHT = {ch:3, tb:3, ai:2, va:2, me:2, un:1, px:1, pb:1, wk:0.4};
+const PROV_WEIGHT = {ch:3, tb:3, ai:2, va:2, me:2, un:1, px:1, pb:1, eu:2, wk:0.4};
 // Light synonym expansion for recall + relevance.
 const SYN = {
   poster:["poster","print","affiche"], typography:["typography","type","lettering","typeface","font"],
