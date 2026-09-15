@@ -58,6 +58,19 @@ browser. These work from the browser once a key is present.
 ### 6. Pixabay  ·  key: `pb`
 - **Base:** `https://pixabay.com/api` · **Key:** API key (free) · grouped by uploader
 
+### 7. Europeana  ·  key: `eu`
+- **Base:** `https://api.europeana.eu/record/v2` · **Key:** `wskey` (free signup)
+- **Provides:** pan-European libraries/museums/archives aggregator (thousands
+  of contributing institutions) — posters, Bauhaus/Art Nouveau graphics,
+  typography, textile/design archives; grouped by creator/contributing
+  institution.
+- Query filtered to `TYPE:IMAGE` + `reusability=open` (Europeana's own flag
+  for CC0/Public Domain/openly-reusable items only).
+- Added by the weekly source-research agent on 2026-09-15 — see
+  `source-research-log.md` for the full evaluation. CORS is documented in
+  Europeana's own API FAQ but wasn't independently curled from this
+  sandboxed run; do one live smoke test before relying on it in production.
+
 ---
 
 ## Compute source (not images)
