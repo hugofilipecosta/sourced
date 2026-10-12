@@ -430,6 +430,26 @@ const P_PIXABAY = {
   async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
 };
 
+// Europeana — aggregates 100s of European museums/archives/design collections
+// (fashion, posters, graphic design, decorative arts). Needs a free API key
+// (plain query-string key, not OAuth); supports CORS per Europeana's own docs.
+const P_EUROPEANA = {
+  key:"eu", base:"https://api.europeana.eu",
+  norm(it){const img=it.edmPreview&&it.edmPreview[0];
+    const creator=(it.dcCreator&&it.dcCreator[0])||(it.dataProvider&&it.dataProvider[0])||null;
+    const yr=(it.year&&it.year[0])?parseInt(it.year[0],10):0;
+    return{id:"eu"+it.id,src:img||null,alt:(it.title&&it.title[0])||"Untitled",
+      sourceUrl:it.guid||null,by:creator,cidKey:slug(creator||""),
+      medium:(it.dataProvider&&it.dataProvider[0])||null,date:yr?String(yr):null,_year:yr};},
+  async search(q,page=SESSION_PAGE){const ak=keyGet("europeana"); if(!ak)return [];
+    const rows=30,start=((page-1)*rows)+1;
+    const d=await getJSON(`${this.base}/record/v2/search.json?wskey=${encodeURIComponent(ak)}&query=${encodeURIComponent(q)}&qf=TYPE:IMAGE&qf=REUSABILITY:open&rows=${rows}&start=${start}&profile=rich`);
+    return (d.items||[]).map(it=>this.norm(it)).filter(x=>x.src&&x.by&&!(x._year&&x._year<YEAR_FROM)&&!(YEAR_TO&&x._year&&x._year>YEAR_TO));},
+  async list(q,per,page=SESSION_PAGE){const a=await this.search(q,page); return groupByCreator(a).slice(0,per).map(g=>museumCollFromGroup(this.key,g,q));},
+  async getColl(native){const name=native.replace(/^creator-/,"").replace(/-/g," ");const a=await this.search(name);const g={cidKey:slug(name),name:a[0]?a[0].by:name,works:a};return museumCollFromGroup(this.key,g,g.name);},
+  async getCurator(native){const coll=await this.getColl(native);return{curator:{handle:cid(this.key,native),name:coll.curatorName,avatar:null,bio:"",followers:null},collections:coll.items.length?[coll]:[]};},
+};
+
 // Wikimedia Commons — keyless, CORS via origin=*; huge breadth.
 const P_WIKI = {
   key:"wk", base:"https://commons.wikimedia.org/w/api.php",
@@ -495,8 +515,8 @@ const P_MET = {
 };
 
 // Wikimedia stays defined but is OUT of the default feed (too much random content).
-const PROVIDERS = {ch:P_CHANNELS, tb:P_TUMBLR, ai:P_AIC, va:P_VAM, me:P_MET, un:P_UNSPLASH, px:P_PEXELS, pb:P_PIXABAY, wk:P_WIKI};
-const PROV_ORDER = ["ch","tb","ai","va","me","un","px","pb"];
+const PROVIDERS = {ch:P_CHANNELS, tb:P_TUMBLR, ai:P_AIC, va:P_VAM, me:P_MET, un:P_UNSPLASH, px:P_PEXELS, pb:P_PIXABAY, eu:P_EUROPEANA, wk:P_WIKI};
+const PROV_ORDER = ["ch","tb","ai","va","me","un","px","pb","eu"];
 
 /* ---------- unified Sourced API (provider-agnostic) ---------- */
 // Trendy 2026 defaults — drawn from what's actually rising on inspiration
@@ -1260,7 +1280,8 @@ function KeysModal({onClose}){
   const [un,setUn]=useState(keyGet("unsplash"));
   const [px,setPx]=useState(keyGet("pexels"));
   const [pb,setPb]=useState(keyGet("pixabay"));
-  const save=()=>{keySet("tumblr",tb.trim());keySet("unsplash",un.trim());keySet("pexels",px.trim());keySet("pixabay",pb.trim());window.location.reload();};
+  const [eu,setEu]=useState(keyGet("europeana"));
+  const save=()=>{keySet("tumblr",tb.trim());keySet("unsplash",un.trim());keySet("pexels",px.trim());keySet("pixabay",pb.trim());keySet("europeana",eu.trim());window.location.reload();};
   const field=(label,val,set,ph)=>(
     <label className="tiny" style={{display:"block",marginBottom:10}}>{label}
       <input type="password" value={val} onChange={e=>set(e.target.value)} placeholder={ph}
@@ -1274,6 +1295,7 @@ function KeysModal({onClose}){
         {field("Unsplash — Access Key",un,setUn,"Client-ID / Access Key")}
         {field("Pexels — API Key",px,setPx,"API key")}
         {field("Pixabay — API Key",pb,setPb,"API key")}
+        {field("Europeana — API Key (European museums & design archives)",eu,setEu,"API key")}
         <div className="mfoot">
           <button className="btn btn-primary" onClick={save}>Save & reload</button>
           <span className="tiny">free keys at each provider's developer page</span>
