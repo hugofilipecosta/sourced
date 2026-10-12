@@ -58,6 +58,28 @@ browser. These work from the browser once a key is present.
 ### 6. Pixabay  ·  key: `pb`
 - **Base:** `https://pixabay.com/api` · **Key:** API key (free) · grouped by uploader
 
+### 7. Europeana  ·  key: `eu`
+- **Base:** `https://api.europeana.eu/record/v2/search.json` · **Key:** free API key
+  (plain query-string key, not OAuth) from a Europeana account
+- **Provides:** aggregates 100s of European museums, libraries and design
+  archives (fashion, posters, graphic design, decorative arts) — genuinely
+  new ground vs. the museum sources already integrated, and widens daily
+  Featured-feed rotation with many different countries/institutions.
+- **Filter:** queries add `qf=TYPE:IMAGE` and `qf=REUSABILITY:open` to stay to
+  openly-licensed images; results are also filtered client-side to items with
+  a src and a named creator/provider.
+- **Image field:** `edmPreview[0]` (thumbnail proxy URL) · grouped by `dcCreator`
+  (falls back to `dataProvider`, the holding institution)
+- **License:** per-item; restricted to Europeana's `open` reusability tier
+  (Public Domain / CC0 / CC BY / CC BY-SA) by the `qf=REUSABILITY:open` filter
+- **Note:** CORS support is documented by Europeana for all its APIs, but this
+  could not be verified with a live browser request during this research run
+  (sandboxed, no outbound network beyond search) — confirm with a real fetch
+  before relying on it. Not yet wired into `colorSearchCollections`'s
+  pixel-reading pool, since that additionally needs the thumbnail *images*
+  (not just the API) to be read without tainting a canvas — verify that
+  separately before adding it there.
+
 ---
 
 ## Compute source (not images)
